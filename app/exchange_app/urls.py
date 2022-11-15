@@ -1,7 +1,9 @@
 from django.urls import path
-from .views import exchange
+from .views import auth, index
 
 
 urlpatterns = [
-    path('', exchange)
+    path('', auth),
+    path('index/', index, name="ind"),
 ]
+
