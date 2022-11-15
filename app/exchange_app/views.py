@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from .models import teachers, simpleTable
 
 
 def auth(request):
@@ -28,3 +29,11 @@ def index(request):
 
     if request.method == 'POST':
         ...
+
+
+def teacher(request):
+    get_teachers = teachers.objects.all()
+    table_teachers = simpleTable(get_teachers)
+    print(get_teachers)
+    if request.method == 'GET':
+        return render(request, 'exchange_app/teachers.html', {'table_teachers': table_teachers})
