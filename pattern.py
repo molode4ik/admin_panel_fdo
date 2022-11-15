@@ -20,3 +20,5 @@ def function2_name(arg: type, arg2: type) -> type:
 # list = [value1, value2]
 # Запуск 
 # cd app -> python ./manage.py runserver
+# При создании страницы не забываем делать миграции
+# cd app -> python ./manage.py migrate  
