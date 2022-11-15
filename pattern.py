@@ -18,4 +18,13 @@ def function2_name(arg: type, arg2: type) -> type:
 # }
 # Запись листа:
 # list = [value1, value2]
-
+# Запуск 
+# cd app -> python ./manage.py runserver
+# При создании страницы не забываем делать миграции
+# cd app -> python ./manage.py migrate  
+# пример отправки данных на страницу
+# world = 'World'
+# context = {
+#     'world': world,
+# }
+# return render(request=request, template_name='exchange_app/_.html', context=context)
