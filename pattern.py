@@ -19,4 +19,4 @@ def function2_name(arg: type, arg2: type) -> type:
 # Запись листа:
 # list = [value1, value2]
 # Запуск 
-# python ./manage.py runserver
+# cd app -> python ./manage.py runserver
