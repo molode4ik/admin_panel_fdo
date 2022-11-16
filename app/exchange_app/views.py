@@ -73,7 +73,8 @@ def users(request):
         if search_query:
             find_data = search_users(search_query, user_data)
             user_data = find_data
-    return render(request=request, template_name='exchange_app/users.html', context={'users': users, 'user_data': user_data})
+    return render(request=request, template_name='exchange_app/users.html', context={'user_data': user_data})
+
 
 
 @login_required()
