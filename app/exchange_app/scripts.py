@@ -1,7 +1,6 @@
 import requests
 from .constants import IP, HOST
 from django.contrib.auth.models import User
-from passlib.hash import bcrypt
 
 
 def check_auth(username: str, password: str) -> [bool, int]:
@@ -13,6 +12,7 @@ def check_auth(username: str, password: str) -> [bool, int]:
     req = 1
     if req == 1:
         users = User.objects.values_list('username', flat=True)
+        users2 = User.objects.values_list('password', flat=True)
         if username not in users:
             create_authed_users(username, password)
         return True, 2
@@ -27,7 +27,7 @@ def create_authed_users(username: str, password: str):
 
 
 def hash_password(password: str) -> str:
-    return bcrypt.hash(password)
+    return ''.join(str(hash(item for item in list(password))))
 
 
 def search_users(search_query: str, user_data: list) -> list:

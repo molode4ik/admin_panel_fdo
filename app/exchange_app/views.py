@@ -5,28 +5,28 @@ from .scripts import check_auth, search_users, hash_password
 
 
 def auth(request):
-    if request.method == 'GET':
-        return render(request=request, template_name='exchange_app/login.html')
-
     if request.method == 'POST':
         username = request.POST.get('username')
         password = hash_password(request.POST.get('password'))
         if check_auth(username=username, password=password):
             user = authenticate(username=username, password=password)
-            login(request, user)
+            if user is not None:
+                login(request, user)
             return redirect("index/")
-        else:
-            return render(request=request, template_name='exchange_app/login.html')
+    return render(request=request, template_name='exchange_app/login.html')
+
+
+@login_required()
+def logout(request):
+    logout(request)
+    return redirect('auth/')
 
 
 @login_required()
 def index(request):
-    if request.method == 'GET':
-        print('aye')
-        return render(request=request, template_name='exchange_app/index.html')
-
     if request.method == 'POST':
         ...
+    return render(request=request, template_name='exchange_app/index.html')
 
 
 @login_required()
@@ -68,13 +68,11 @@ def users(request):
             "Login": "sys@"
         },
     ]
-
     if request.method == 'POST':
         if search_query:
             find_data = search_users(search_query, user_data)
             user_data = find_data
     return render(request=request, template_name='exchange_app/users.html', context={'user_data': user_data})
-
 
 
 @login_required()
