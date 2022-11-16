@@ -28,3 +28,12 @@ def create_authed_users(username: str, password: str):
 
 def hash_password(password: str) -> str:
     return bcrypt.hash(password)
+
+
+def search_users(search_query: str, user_data: list) -> list:
+    find_data = []
+    for record in user_data:
+        some = [item for item in record.values() if search_query in item]
+        if len(some) > 0:
+            find_data.append(record)
+    return find_data

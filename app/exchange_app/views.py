@@ -1,8 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from .scripts import check_auth
-from django.contrib.auth.hashers import make_password
+from .scripts import check_auth, search_users, hash_password
 
 
 def auth(request):
@@ -11,7 +10,7 @@ def auth(request):
 
     if request.method == 'POST':
         username = request.POST.get('username')
-        password = make_password(request.POST.get('password'))
+        password = hash_password(request.POST.get('password'))
         if check_auth(username=username, password=password):
             user = authenticate(username=username, password=password)
             login(request, user)
@@ -42,8 +41,7 @@ def teachers(request):
 
 @login_required()
 def users(request):
-    search_query = request.GET.get('search', '')
-
+    search_query = request.POST.get('search', '')
     user_data = [
         {
             "ID": "1",
@@ -71,16 +69,10 @@ def users(request):
         },
     ]
 
-    find_data = []
-
-    if search_query:
-        for record in user_data:
-            for val in record.values():
-                if val.find(search_query) != -1:
-                    find_data.append(record)
-                    break
-        user_data = find_data
-
+    if request.method == 'POST':
+        if search_query:
+            find_data = search_users(search_query, user_data)
+            user_data = find_data
     return render(request=request, template_name='exchange_app/users.html', context={'users': users, 'user_data': user_data})
 
 

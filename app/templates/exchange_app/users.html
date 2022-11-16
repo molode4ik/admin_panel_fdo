@@ -18,10 +18,13 @@
                         </div>
                         <div class="col-sm-9 col-xs-12 text-right">
                             <div class="btn_group">
-                                <form action="{% url 'users' %}" method="get">
+
+                                <form action="{% url 'users' %}" method="POST">
+                                    {% csrf_token %}
                                     <input type="text" class="form-control" placeholder="Search" name="search">
                                 </form>
-                                <form action="{% url 'users' %}" method="get">
+                                <form action="{% url 'users' %}" method="POST">
+                                    {% csrf_token %}
                                     <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i> сбросить</button>
                                 </form>
                             </div>
