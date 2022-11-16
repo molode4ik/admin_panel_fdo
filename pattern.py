@@ -28,3 +28,5 @@ def function2_name(arg: type, arg2: type) -> type:
 #     'world': world,
 # }
 # return render(request=request, template_name='exchange_app/_.html', context=context)
+# Создания класса:
+# class Name
