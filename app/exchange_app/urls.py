@@ -1,10 +1,11 @@
 from django.urls import path
-from .views import auth, index, teachers
+from .views import auth, index, teachers, admins
 
 
 urlpatterns = [
     path('', auth),
-    path('index/', index, name="ind"),
-    path('teachers/', teachers, name="teachers")
+    path('index/', index),
+    path('teachers/', teachers, name="teachers"),
+    path('admins/', admins)
 ]
 
