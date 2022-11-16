@@ -12,6 +12,13 @@ class Post(models.Model):
     body = models.TextField()
 
 
+class Users(models.Model):
+    FIO = models.CharField(max_length=150)
+    Gradebook_number = models.IntegerField()
+    Login = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.FIO
 #
 # class Login(View):
 #     template_name = 'exchange_app/login.html'
