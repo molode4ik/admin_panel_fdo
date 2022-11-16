@@ -6,5 +6,6 @@ urlpatterns = [
     path('', auth),
     path('index/', index, name="ind"),
     path('teachers/', teachers, name="teachers")
+    path('users/', users, name="users")
 ]
 

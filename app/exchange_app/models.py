@@ -46,3 +46,12 @@ class SimpleTable(tables.Table):
 #             'form': form
 #         }
 #         return render(request, self.template_name, context)
+
+class Users(models.Model):
+    FIO = models.CharField(max_length=150)
+    Gradebook_number = models.IntegerField()
+    Login = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.FIO
+

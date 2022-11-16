@@ -39,3 +39,46 @@ def teachers(request):
     # print(get_teachers)
     # if request.method == 'GET':
     #     return render(request, 'exchange_app/teachers.html', {'table_teachers': table_teachers})
+
+@login_required()
+def users(request):
+    search_query = request.GET.get('search', '')
+
+    user_data = [
+        {
+            "ID": "1",
+            "FIO": "Сыс Артем Валерьевич",
+            "Gradebook_number": "1242142",
+            "Login": "Traxat"
+        },
+        {
+            "ID": "2",
+            "FIO": "Синяк Антон Валерьеич",
+            "Gradebook_number": "442222",
+            "Login": "SIMEN"
+        },
+        {
+            "ID": "3",
+            "FIO": "Зарыб Ос КАЧев",
+            "Gradebook_number": "922645",
+            "Login": "4el"
+        },
+        {
+            "ID": "4",
+            "FIO": "Сыс Сус СЫН",
+            "Gradebook_number": "222222",
+            "Login": "sys@"
+        },
+    ]
+
+    find_data = []
+
+    if search_query:
+        for record in user_data:
+            for val in record.values():
+                if val.find(search_query) != -1:
+                    find_data.append(record)
+                    break
+        user_data = find_data
+
+    return render(request=request, template_name='exchange_app/users.html', context={'users': users, 'user_data': user_data})
