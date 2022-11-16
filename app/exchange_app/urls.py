@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import auth, index, teacher
+from .views import auth, index, teachers
 
 
 urlpatterns = [
     path('', auth),
     path('index/', index, name="ind"),
-    path('teacher/', teacher, name="teacher")
+    path('teachers/', teachers, name="teachers")
 ]
 

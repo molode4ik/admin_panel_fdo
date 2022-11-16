@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import teachers, simpleTable
+from .models import Teachers, SimpleTable
+from django.contrib.auth import authenticate, login
+from .scripts import check_auth
+from django.contrib.auth.hashers import make_password
 
 
 def auth(request):
@@ -9,19 +11,17 @@ def auth(request):
         return render(request=request, template_name='exchange_app/login.html')
 
     if request.method == 'POST':
-        users = User.objects.values_list('username', flat=True)
         username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        if username not in users:
-            user = User.objects.create_user(username=username,
-                                            password=password)
-            user.save()
-        print(users)
-        #return render(request=request, template_name='exchange_app/index.html')
-        return redirect("exchange_app:ind")
+        password = make_password(request.POST.get('password'))
+        if check_auth(username=username, password=password):
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect("exchange_app:ind")
+        else:
+            return render(request=request, template_name='exchange_app/login.html')
 
 
+@login_required()
 def index(request):
     if request.method == 'GET':
         print('aye')
@@ -31,9 +31,11 @@ def index(request):
         ...
 
 
-def teacher(request):
-    get_teachers = teachers.objects.all()
-    table_teachers = simpleTable(get_teachers)
-    print(get_teachers)
-    if request.method == 'GET':
-        return render(request, 'exchange_app/teachers.html', {'table_teachers': table_teachers})
+@login_required()
+def teachers(request):
+    ...
+    # get_teachers = Teachers.objects.all()
+    # table_teachers = SimpleTable(get_teachers)
+    # print(get_teachers)
+    # if request.method == 'GET':
+    #     return render(request, 'exchange_app/teachers.html', {'table_teachers': table_teachers})
