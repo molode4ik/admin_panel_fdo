@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Teachers, SimpleTable
 from django.contrib.auth import authenticate, login
 from .scripts import check_auth
 from django.contrib.auth.hashers import make_password
