@@ -50,3 +50,9 @@ def search_users(search_query: str, user_data: list) -> list:
         if len(some) > 0:
             find_data.append(record)
     return find_data
+
+
+def search_user(users: list, user_id: int) -> list:
+    for user in users:
+        if user_id == user.get('ID'):
+            return user

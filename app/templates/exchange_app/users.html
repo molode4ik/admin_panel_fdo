@@ -18,14 +18,13 @@
                         </div>
                         <div class="col-sm-9 col-xs-12 text-right">
                             <div class="btn_group">
-
                                 <form action="{% url 'users' %}" method="POST">
                                     {% csrf_token %}
                                     <input type="text" class="form-control" placeholder="Search" name="search">
                                 </form>
                                 <form action="{% url 'users' %}" method="POST">
                                     {% csrf_token %}
-                                    <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i> сбросить</button>
+                                    <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i>Сбросить</button>
                                 </form>
                             </div>
                         </div>
@@ -51,13 +50,15 @@
                                 <td>{{ user.Gradebook_number }}</td>
                                 <td>{{ user.Login }}</td>
                                 <td>
-                                    <form action="{% url 'users' %}" method="get">
-                                        <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i> сбросить</button>
+                                    <form action="{% url 'user_edit' user.ID %}" method="POST">
+                                        {% csrf_token %}
+                                        <button class="btn btn-default" title="Edit"><i class="fa fa-sync-alt"></i>Редактировать</button>
                                     </form>
                                 </td>
                                 <td>
-                                    <form action="{% url 'users' %}" method="get">
-                                        <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i> сбросить</button>
+                                    <form action="{% url 'users' %}" method="POST">
+                                        {% csrf_token %}
+                                        <button class="btn btn-default" title="Delete"><i class="fa fa-sync-alt"></i>Удалить</button>
                                     </form>
                                 </td>
                             </tr>

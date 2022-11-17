@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login
-from .scripts import check_auth, search_users, hash_password
+from .scripts import check_auth, search_users, hash_password, search_user
 
 
 def auth(request):
@@ -44,25 +44,25 @@ def users(request):
     search_query = request.POST.get('search', '')
     user_data = [
         {
-            "ID": "1",
+            "ID": 1,
             "FIO": "Сыс Артем Валерьевич",
             "Gradebook_number": "1242142",
             "Login": "Traxat"
         },
         {
-            "ID": "2",
+            "ID": 2,
             "FIO": "Синяк Антон Валерьеич",
             "Gradebook_number": "442222",
             "Login": "SIMEN"
         },
         {
-            "ID": "3",
+            "ID": 3,
             "FIO": "Зарыб Ос КАЧев",
             "Gradebook_number": "922645",
             "Login": "4el"
         },
         {
-            "ID": "4",
+            "ID": 4,
             "FIO": "Сыс Сус СЫН",
             "Gradebook_number": "222222",
             "Login": "sys@"
@@ -75,7 +75,15 @@ def users(request):
     if request.user.has_perm('exchange_app.change_users'):
         # Здесь открывает страницу измениея пользователя
         ...
+    request.session['user_data'] = user_data
     return render(request=request, template_name='exchange_app/users.html', context={'user_data': user_data})
+
+
+def user_edit(request, user_id):
+    user_list = request.session['user_data']
+    user = search_user(user_list, user_id)
+    user_FIO = user['FIO'].split()
+    return render(request=request, template_name='exchange_app/user_edit.html', context={'user': user, 'user_FIO': user_FIO})
 
 
 @login_required()
