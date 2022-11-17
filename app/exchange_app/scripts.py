@@ -1,6 +1,7 @@
 import requests
-from .constants import IP, HOST
+#from .config import Requests
 from django.contrib.auth.models import User, Group
+
 
 
 def check_auth(username: str, password: str) -> [bool, int]:
@@ -8,6 +9,7 @@ def check_auth(username: str, password: str) -> [bool, int]:
         'username': username,
         'password': hash_password(password),
     }
+   # req = requests.post(url=(Requests.host+Requests.port+))
     #req = requests.post(url=(IP+HOST), data=send_data).json()
     permission = 'admin'
     req = 1
@@ -56,3 +58,10 @@ def search_user(users: list, user_id: int) -> list:
     for user in users:
         if user_id == user.get('ID'):
             return user
+
+
+def search_admin(admins: list, admin_id: int) -> dict:
+    for admin in admins:
+        if admin_id == admin.get('admin_id'):
+            return admin
+

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="POST">
+    {% csrf_token %}
+    <input value="{{ admin_name }}" name="admin_name">
+    <input value="{{ admin_privilege }}" name="admin_privilege">
+        <button class="" type="submit"> Изменить </button>
+    </form>
+
+{% endblock %}

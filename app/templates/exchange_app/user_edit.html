@@ -20,8 +20,13 @@
                 <input class="form-styling" type="text" name="username" placeholder="" value="{{ user.Gradebook_number }}" />
               <label for="password">Логин</label>
                 <input class="form-styling" type="text" name="password" placeholder="" value="{{ user.Login }}" />
-              <div class="btn-animate"> <a class="btn-signin">Сохранить изменения</a> </div>
-              <div class="btn-animate"> <a class="btn-signin">Назад</a> </div>
+                <div class="btn-animate">
+                    <form action="{% url 'users' %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-default" title="Delete"><i class="fa fa-sync-alt"></i>Сохранить изменения</button>
+                    </form>
+                </div>
+                <div class="btn-animate"> <a href="{% url 'users' %}" class="btn-signin">Назад</a> </div>
             </form>
             </div>
         </div>
