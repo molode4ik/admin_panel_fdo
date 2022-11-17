@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login
-from .scripts import check_auth, search_users, hash_password
+from .scripts import check_auth, search_users, search_admin
+#from .config import Requests
 
 
 def auth(request):
@@ -78,6 +79,7 @@ def users(request):
     return render(request=request, template_name='exchange_app/users.html', context={'user_data': user_data})
 
 
+#@permission_required('permissions.view_permission')
 @login_required()
 def admins(request):
     user_data = [
@@ -96,11 +98,25 @@ def admins(request):
             'admin_privilege': 'privilege'
         },
     ]
-
-    if request.user.has_perm('exchange_app.change_users'):
-        # Здесь открывает страницу измениея пользователя
-        ...
+    request.session['user_data'] = user_data
     return render(request=request, template_name='exchange_app/admins.html', context={'user_data': user_data})
 
 
+@login_required()
+def change_admin(request, admin_id):
+    admins_list = request.session['user_data']
+    admin = search_admin(admins_list, admin_id)
+    if request.method == "POST":
+        send_data = {
+            'admin_name': request.POST.get('admin_name'),
+            'admin_privilege': request.POST.get('admin_privilege')
+        }
+        print(send_data)
+        return redirect('http://127.0.0.1:8000/admins/')
+    return render(request=request, template_name='exchange_app/admin.html', context=admin)
 
+
+@login_required()
+def delete_admin(request, admin_id):
+    print('delete ', admin_id)
+    return redirect('http://127.0.0.1:8000/admins/')
