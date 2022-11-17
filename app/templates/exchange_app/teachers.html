@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load django_tables2 %}
 {% load static %}
 {% block content %}
 <head>
@@ -7,6 +6,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
 </head>
 <body>
-    {% render_table table_teachers %}
+    <h1> {{user}}</h1>
 </body>
 {% endblock %}

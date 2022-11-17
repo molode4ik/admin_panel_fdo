@@ -19,7 +19,10 @@ class Users(models.Model):
 
     def __str__(self):
         return self.FIO
+
+
 #
+
 # class Login(View):
 #     template_name = 'exchange_app/login.html'
 #

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login
 from .scripts import check_auth, search_users, hash_password
 
@@ -7,11 +7,11 @@ from .scripts import check_auth, search_users, hash_password
 def auth(request):
     if request.method == 'POST':
         username = request.POST.get('username')
-        password = hash_password(request.POST.get('password'))
+        password = request.POST.get('password')
         if check_auth(username=username, password=password):
             user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
+            login(request, user)
+            print(user.get_group_permissions())
             return redirect("index/")
     return render(request=request, template_name='exchange_app/login.html')
 
@@ -24,11 +24,10 @@ def logout(request):
 
 @login_required()
 def index(request):
-    if request.method == 'POST':
-        ...
     return render(request=request, template_name='exchange_app/index.html')
 
 
+@permission_required("exchange_app.view_teachers")
 @login_required()
 def teachers(request):
     ...
@@ -36,9 +35,10 @@ def teachers(request):
     # table_teachers = SimpleTable(get_teachers)
     # print(get_teachers)
     # if request.method == 'GET':
-    #     return render(request, 'exchange_app/teachers.html', {'table_teachers': table_teachers})
+    return render(request, 'exchange_app/teachers.html')
 
 
+@permission_required("exchange_app.view_users")
 @login_required()
 def users(request):
     search_query = request.POST.get('search', '')
@@ -72,6 +72,9 @@ def users(request):
         if search_query:
             find_data = search_users(search_query, user_data)
             user_data = find_data
+    if request.user.has_perm('exchange_app.change_users'):
+        # Здесь открывает страницу измениея пользователя
+        ...
     return render(request=request, template_name='exchange_app/users.html', context={'user_data': user_data})
 
 
