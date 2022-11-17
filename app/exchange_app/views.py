@@ -80,54 +80,27 @@ def users(request):
 
 @login_required()
 def admins(request):
-    ...
+    user_data = [
+        {
+            'admin_id': 1,
+            'admin_name': 'name',
+            'admin_login': 'login',
+            'admin_password': 'password',
+            'admin_privilege': 'privilege'
+        },
+        {
+            'admin_id': 2,
+            'admin_name': 'name',
+            'admin_login': 'login',
+            'admin_password': 'password',
+            'admin_privilege': 'privilege'
+        },
+    ]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@login_required()
-def admins(request):
-    data = []
-    req = {
-        'admin_name': 'name',
-        'admin_login': 'login',
-        'admin_password': 'password',
-        'admin_privilege': 'privilege'
-    }
-    if request.POST:
+    if request.user.has_perm('exchange_app.change_users'):
+        # Здесь открывает страницу измениея пользователя
         ...
-    return render(request=request, template_name='exchange_app/admins.html', context={'data': data})
+    return render(request=request, template_name='exchange_app/admins.html', context={'user_data': user_data})
+
+
+
