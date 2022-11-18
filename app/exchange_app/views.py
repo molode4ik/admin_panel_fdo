@@ -75,7 +75,10 @@ def users(request):
     user_data = get_students()
     if request.method == 'POST':
         if search_query:
-            find_data = search_users(search_query, user_data)
+            find_data = search_users(str(search_query), user_data)
+            print(type(search_query))
+            print(user_data)
+            print(find_data)
             user_data = find_data
 
     request.session['user_data'] = user_data

@@ -46,8 +46,8 @@ def hash_password(password: str) -> str:
 def search_users(search_query: str, user_data: list) -> list:
     find_data = []
     for record in user_data:
-        some = [item for item in record.values() if search_query in item]
-        if len(some) > 0:
+        some = [item for item in record.values()]
+        if search_query in list(map(str, some)):
             find_data.append(record)
     return find_data
 
