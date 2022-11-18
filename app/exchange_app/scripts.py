@@ -51,7 +51,14 @@ def search_users(search_query: str, user_data: list) -> list:
     return find_data
 
 
+def search_user(users: list, user_id: int) -> list:
+    for user in users:
+        if user_id == user.get('ID'):
+            return user
+
+
 def search_admin(admins: list, admin_id: int) -> dict:
     for admin in admins:
         if admin_id == admin.get('admin_id'):
             return admin
+
