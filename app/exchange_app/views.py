@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login
-from .scripts import check_auth, search_users, hash_password, search_user
-from .scripts import check_auth, search_users, search_admin
-#from .config import Requests
-from .api_requests import get_admins
+from .scripts import check_auth, search_users, search_admin, search_user
+from .api_requests import get_admins, get_students
 
 
 def auth(request):
@@ -47,39 +45,12 @@ def teachers(request):
 @login_required()
 def users(request):
     search_query = request.POST.get('search', '')
-    user_data = [
-        {
-            "ID": 1,
-            "FIO": "Сыс Артем Валерьевич",
-            "Gradebook_number": "1242142",
-            "Login": "Traxat"
-        },
-        {
-            "ID": 2,
-            "FIO": "Синяк Антон Валерьеич",
-            "Gradebook_number": "442222",
-            "Login": "SIMEN"
-        },
-        {
-            "ID": 3,
-            "FIO": "Зарыб Ос КАЧев",
-            "Gradebook_number": "922645",
-            "Login": "4el"
-        },
-        {
-            "ID": 4,
-            "FIO": "Сыс Сус СЫН",
-            "Gradebook_number": "222222",
-            "Login": "sys@"
-        },
-    ]
+    user_data = get_students()
     if request.method == 'POST':
         if search_query:
             find_data = search_users(search_query, user_data)
             user_data = find_data
-    if request.user.has_perm('exchange_app.change_users'):
-        # Здесь открывает страницу измениея пользователя
-        ...
+
     request.session['user_data'] = user_data
     return render(request=request, template_name='exchange_app/users.html', context={'user_data': user_data})
 

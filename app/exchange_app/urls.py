@@ -1,6 +1,5 @@
 from django.urls import path
-from .views import auth, index, teachers, users, admins, logout, user_edit
-from .views import auth, index, teachers, users, admins, change_admin, logout, delete_admin
+from .views import auth, index, teachers, users, admins, change_admin, logout, delete_admin, user_edit
 from django.contrib.auth.views import LogoutView, LoginView
 
 

@@ -12,3 +12,8 @@ def admin_auth(send_data: dict) -> dict:
 def get_admins() -> list:
     req = requests.post(api_url + 'get_admins')
     return req.json()
+
+
+def get_students():
+    req = requests.post(api_url + 'get_students')
+    return req.json()
