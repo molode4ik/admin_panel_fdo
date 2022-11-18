@@ -1,21 +1,18 @@
-import requests
-#from .config import Requests
 from django.contrib.auth.models import User, Group
-
+from .api_requests import admin_auth
+from argon2 import PasswordHasher
 
 
 def check_auth(username: str, password: str) -> [bool, int]:
     send_data = {
-        'username': username,
+        'login': username,
         'password': hash_password(password),
     }
-   # req = requests.post(url=(Requests.host+Requests.port+))
-    #req = requests.post(url=(IP+HOST), data=send_data).json()
+    admin_auth(send_data)
     permission = 'admin'
     req = 1
     if req == 1:
         users = User.objects.values_list('username', flat=True)
-        users2 = User.objects.values_list('password', flat=True)
         if username not in users:
             create_authed_users(username, password, permission.lower())
         return True, 2
