@@ -1,13 +1,14 @@
 from django.urls import path
-from .views import auth, index, teachers, users, admins, logout, user_edit
-from .views import auth, index, teachers, users, admins, change_admin, logout, delete_admin
+from .views import *
 from django.contrib.auth.views import LogoutView, LoginView
 
 
 urlpatterns = [
     path('', auth),
     path('index/', index),
+    path('debts/', debts, name="debts"),
     path('teachers/', teachers, name="teachers"),
+    path('teachers/add_teacher', add_teacher, name="add_teacher"),
     path('users/', users, name="users"),
     path('users/edit_<int:user_id>', user_edit, name="user_edit"),
     path('admins/', admins),

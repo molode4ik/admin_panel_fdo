@@ -1,8 +1,9 @@
 import requests
-#from .config import Requests
 from django.contrib.auth.models import User, Group
-
-
+from django.core.files.storage import FileSystemStorage
+import json
+#from .config import Requests
+import os
 
 def check_auth(username: str, password: str) -> [bool, int]:
     send_data = {
@@ -28,6 +29,7 @@ def create_authed_users(username: str, password: str, permission: str):
                                     password=password)
     user = add_permissions(user, permission)
     user.save()
+
 
 # Уточнить по поводу хранения пермишина, переписать получше если все ок Group.objects.get_or_create(name=permission)
 def add_permissions(user, permission: str) -> User:
@@ -64,4 +66,18 @@ def search_admin(admins: list, admin_id: int) -> dict:
     for admin in admins:
         if admin_id == admin.get('admin_id'):
             return admin
+
+
+def parse_file(uploaded_file):
+    if uploaded_file.name != '':
+        if uploaded_file.content_type == 'application/json':
+            fs = FileSystemStorage()
+            filename = fs.save(uploaded_file.name, uploaded_file)
+            with open("media/" + filename, encoding="utf-8") as json_file:
+                data = json.load(json_file)
+                print(data)
+                for row in data:
+                    pass
+            os.remove("media/" + filename)
+            return data
 

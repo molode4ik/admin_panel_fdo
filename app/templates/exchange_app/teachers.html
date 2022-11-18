@@ -1,11 +1,63 @@
 {% extends 'base.html' %}
+
 {% load static %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
+{% endblock %}
+
 {% block content %}
-<head>
-    <title>List of persons</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-</head>
-<body>
-    <h1> {{user}}</h1>
-</body>
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    <input accept=".csv, .json" type="file" name="document">
+    <button type="submit">Загрузить</button>
+</form>
+<form action="{% url 'add_teacher' %}" method="POST">
+    {% csrf_token %}
+    <button class="btn btn-default" title="Add"><i class="fa fa-sync-alt"></i>Добавить</button>
+</form>
+<div class="container">
+    <div class="row">
+        <div class="col-md-offset-1 col-md-10">
+            <div class="panel">
+                <div class="panel-heading">
+                </div>
+                <div class="panel-body table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Ф.И.О.</th>
+                                <th>Номер телефона</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for teacher in teachers_data %}
+                            <tr>
+                                <td>{{ teacher.teacher_id }}</td>
+                                <td>{{ teacher.FIO }}</td>
+                                <td>{{ teacher.Telephone_hunber }}</td>
+                                <td>
+                                    <form action="" method="POST">
+                                        {% csrf_token %}
+                                        <button class="btn btn-default" title="Edit"><i class="fa fa-sync-alt"></i>Редактировать</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="{% url 'teachers' %}" method="POST">
+                                        {% csrf_token %}
+                                        <button class="btn btn-default" title="Delete"><i class="fa fa-sync-alt"></i>Удалить</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

@@ -1,4 +1,5 @@
 from django.db import models
+from django import forms
 from django.views import View
 from .forms import UserCreationForm
 from django.shortcuts import render, redirect
@@ -20,7 +21,6 @@ class Users(models.Model):
 
 
 #
-
 # class Login(View):
 #     template_name = 'exchange_app/login.html'
 #
