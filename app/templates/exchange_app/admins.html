@@ -18,11 +18,11 @@
                         <div class="col-sm-9 col-xs-12 text-right">
                             <div class="btn_group">
 
-                                <form action="{% url 'users' %}" method="POST">
+                                <form action="{% url 'admins' %}" method="POST">
                                     {% csrf_token %}
                                     <input type="text" class="form-control" placeholder="Search" name="search">
                                 </form>
-                                <form action="{% url 'users' %}" method="POST">
+                                <form action="{% url 'admins' %}" method="POST">
                                     {% csrf_token %}
                                     <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i> сбросить</button>
                                 </form>
@@ -41,16 +41,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                        {% for admin in user_data %}
+                        {% for admin in admins_data %}
                             <tr>
                                 <td> {{ admin.admin_id }}
                                 <td>{{ admin.admin_name}}</td>
                                 <td>{{ admin.admin_login }}</td>
                                 <td>{{ admin.admin_privilege }}</td>
-
+                                {% if perms.auth.change_permission %}
                                     <td><a href="/admins/{{ admin.admin_id }}">Подробнее</a></td>
                                     <td><a href="/admins/delete_admin/{{ admin.admin_id }}">Удалить</a></td>
-
+                                {% endif %}
                             </tr>
                         {% endfor %}
                         </tbody>

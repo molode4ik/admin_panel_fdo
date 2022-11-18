@@ -4,24 +4,24 @@ from django.core.files.storage import FileSystemStorage
 import json
 #from .config import Requests
 import os
+from .api_requests import admin_auth
+import hashlib
+
 
 def check_auth(username: str, password: str) -> [bool, int]:
     send_data = {
-        'username': username,
+        'login': username,
         'password': hash_password(password),
     }
-   # req = requests.post(url=(Requests.host+Requests.port+))
-    #req = requests.post(url=(IP+HOST), data=send_data).json()
-    permission = 'admin'
-    req = 1
-    if req == 1:
+    req_data = admin_auth(send_data)
+    if req_data != -1:
+        permission = req_data['admin_privilege']
         users = User.objects.values_list('username', flat=True)
-        users2 = User.objects.values_list('password', flat=True)
         if username not in users:
             create_authed_users(username, password, permission.lower())
-        return True, 2
+        return True
     else:
-        return False, 0
+        return False
 
 
 def create_authed_users(username: str, password: str, permission: str):
@@ -32,19 +32,15 @@ def create_authed_users(username: str, password: str, permission: str):
 
 
 # Уточнить по поводу хранения пермишина, переписать получше если все ок Group.objects.get_or_create(name=permission)
+
 def add_permissions(user, permission: str) -> User:
-    if 'admin' in permission:
-        group, created = Group.objects.get_or_create(name="Admin")
-    if 'moder' in permission:
-        group, created = Group.objects.get_or_create(name="Moderator")
-    if 'view' in permission:
-        group, created = Group.objects.get_or_create(name="Viewer")
+    group, created = Group.objects.get_or_create(name=permission)
     user.groups.add(group)
     return user
 
 
 def hash_password(password: str) -> str:
-    return ''.join(str(hash(item for item in list(password))))
+    return hashlib.md5(password.encode()).hexdigest()
 
 
 def search_users(search_query: str, user_data: list) -> list:
@@ -58,7 +54,7 @@ def search_users(search_query: str, user_data: list) -> list:
 
 def search_user(users: list, user_id: int) -> list:
     for user in users:
-        if user_id == user.get('ID'):
+        if user_id == user.get('student_id'):
             return user
 
 

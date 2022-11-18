@@ -4,9 +4,13 @@ from django.contrib.auth import authenticate, login
 from .scripts import check_auth, search_users, hash_password, search_user, search_admin, parse_file
 import json, csv
 #from .config import Requests
+from .api_requests import get_admins, get_students
+
 
 
 def auth(request):
+    if request.user.is_authenticated:
+        return redirect("index/")
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -68,76 +72,39 @@ def add_teacher(request):
 @login_required()
 def users(request):
     search_query = request.POST.get('search', '')
-    user_data = [
-        {
-            "ID": 1,
-            "FIO": "Сыс Артем Валерьевич",
-            "Gradebook_number": "1242142",
-            "Login": "Traxat"
-        },
-        {
-            "ID": 2,
-            "FIO": "Синяк Антон Валерьеич",
-            "Gradebook_number": "442222",
-            "Login": "SIMEN"
-        },
-        {
-            "ID": 3,
-            "FIO": "Зарыб Ос КАЧев",
-            "Gradebook_number": "922645",
-            "Login": "4el"
-        },
-        {
-            "ID": 4,
-            "FIO": "Сыс Сус СЫН",
-            "Gradebook_number": "222222",
-            "Login": "sys@"
-        },
-    ]
+    user_data = get_students()
     if request.method == 'POST':
         if search_query:
             find_data = search_users(search_query, user_data)
             user_data = find_data
-    if request.user.has_perm('exchange_app.change_users'):
-        # Здесь открывает страницу измениея пользователя
-        ...
+
     request.session['user_data'] = user_data
     return render(request=request, template_name='exchange_app/users.html', context={'user_data': user_data})
 
 
+@permission_required("exchange_app.change_users")
+@login_required()
 def user_edit(request, user_id):
     user_list = request.session['user_data']
     user = search_user(user_list, user_id)
-    user_FIO = user['FIO'].split()
+    print(user)
+    user_FIO = [user_list[0]["student_lastname"], user_list[0]["student_firstname"], user_list[0]["student_middlename"]]
     return render(request=request, template_name='exchange_app/user_edit.html', context={'user': user, 'user_FIO': user_FIO})
 
 
-#@permission_required('permissions.view_permission')
+@permission_required('auth.view_permission')
 @login_required()
 def admins(request):
-    user_data = [
-        {
-            'admin_id': 1,
-            'admin_name': 'name',
-            'admin_login': 'login',
-            'admin_password': 'password',
-            'admin_privilege': 'privilege'
-        },
-        {
-            'admin_id': 2,
-            'admin_name': 'name',
-            'admin_login': 'login',
-            'admin_password': 'password',
-            'admin_privilege': 'privilege'
-        },
-    ]
-    request.session['user_data'] = user_data
-    return render(request=request, template_name='exchange_app/admins.html', context={'user_data': user_data})
+    admins_data = get_admins()
+    print(admins_data)
+    request.session['admins_data'] = admins_data
+    return render(request=request, template_name='exchange_app/admins.html', context={'admins_data': admins_data})
 
 
+@permission_required('auth.change_permission')
 @login_required()
 def change_admin(request, admin_id):
-    admins_list = request.session['user_data']
+    admins_list = request.session['admins_data']
     admin = search_admin(admins_list, admin_id)
     if request.method == "POST":
         send_data = {
@@ -149,6 +116,7 @@ def change_admin(request, admin_id):
     return render(request=request, template_name='exchange_app/admin.html', context=admin)
 
 
+@permission_required('auth.delete_permission')
 @login_required()
 def delete_admin(request, admin_id):
     print('delete ', admin_id)

@@ -45,12 +45,13 @@
                         <tbody>
                         {% for user in user_data %}
                             <tr>
-                                <td>{{ user.ID }}</td>
-                                <td>{{ user.FIO }}</td>
-                                <td>{{ user.Gradebook_number }}</td>
-                                <td>{{ user.Login }}</td>
+                                <td>{{ user.student_id }}</td>
+                                <td>{{ user.student_lastname}} {{user.student_firstname}} {{user.student_middlename}}</td>
+                                <td>{{ user.record_number }}</td>
+                                <td>{{ user.student_login }}</td>
+                                {% if perms.exchange_app.change_users %}
                                 <td>
-                                    <form action="{% url 'user_edit' user.ID %}" method="POST">
+                                    <form action="{% url 'user_edit' user.student_id %}" method="POST">
                                         {% csrf_token %}
                                         <button class="btn btn-default" title="Edit"><i class="fa fa-sync-alt"></i>Редактировать</button>
                                     </form>
@@ -61,6 +62,7 @@
                                         <button class="btn btn-default" title="Delete"><i class="fa fa-sync-alt"></i>Удалить</button>
                                     </form>
                                 </td>
+                                {% endif %}
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -77,10 +79,6 @@
                                 <li><a href="#">3</a></li>
                                 <li><a href="#">4</a></li>
                                 <li><a href="#">5</a></li>
-                                <li><a href="#">></a></li>
-                            </ul>
-                            <ul class="pagination visible-xs pull-right">
-                                <li><a href="#"><</a></li>
                                 <li><a href="#">></a></li>
                             </ul>
                         </div>

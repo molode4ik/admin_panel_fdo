@@ -17,9 +17,9 @@
               <label for="fullname">Отчество</label>
                 <input class="form-styling" type="text" name="username" placeholder="" value="{{ user_FIO.2 }}" />
               <label for="dlno">Номер зачетной книжки</label>
-                <input class="form-styling" type="text" name="username" placeholder="" value="{{ user.Gradebook_number }}" />
+                <input class="form-styling" type="text" name="username" placeholder="" value="{{ user.record_number }}" />
               <label for="password">Логин</label>
-                <input class="form-styling" type="text" name="password" placeholder="" value="{{ user.Login }}" />
+                <input class="form-styling" type="text" name="password" placeholder="" value="{{ user.student_login }}" />
                 <div class="btn-animate">
                     <form action="{% url 'users' %}" method="POST">
                         {% csrf_token %}
