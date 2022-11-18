@@ -96,15 +96,16 @@ def user_edit(request, user_id):
 @permission_required('auth.view_permission')
 @login_required()
 def admins(request):
-    user_data = get_admins()
-    request.session['user_data'] = user_data
-    return render(request=request, template_name='exchange_app/admins.html', context={'user_data': user_data})
+    admins_data = get_admins()
+    print(admins_data)
+    request.session['admins_data'] = admins_data
+    return render(request=request, template_name='exchange_app/admins.html', context={'admins_data': admins_data})
 
 
 @permission_required('auth.change_permission')
 @login_required()
 def change_admin(request, admin_id):
-    admins_list = request.session['user_data']
+    admins_list = request.session['admins_data']
     admin = search_admin(admins_list, admin_id)
     if request.method == "POST":
         send_data = {
