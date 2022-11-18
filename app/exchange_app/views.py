@@ -4,9 +4,12 @@ from django.contrib.auth import authenticate, login
 from .scripts import check_auth, search_users, hash_password, search_user
 from .scripts import check_auth, search_users, search_admin
 #from .config import Requests
+from .api_requests import get_admins
 
 
 def auth(request):
+    if request.user.is_authenticated:
+        return redirect("index/")
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -81,6 +84,8 @@ def users(request):
     return render(request=request, template_name='exchange_app/users.html', context={'user_data': user_data})
 
 
+@permission_required("exchange_app.change_users")
+@login_required()
 def user_edit(request, user_id):
     user_list = request.session['user_data']
     user = search_user(user_list, user_id)
@@ -88,29 +93,15 @@ def user_edit(request, user_id):
     return render(request=request, template_name='exchange_app/user_edit.html', context={'user': user, 'user_FIO': user_FIO})
 
 
-#@permission_required('permissions.view_permission')
+@permission_required('auth.view_permission')
 @login_required()
 def admins(request):
-    user_data = [
-        {
-            'admin_id': 1,
-            'admin_name': 'name',
-            'admin_login': 'login',
-            'admin_password': 'password',
-            'admin_privilege': 'privilege'
-        },
-        {
-            'admin_id': 2,
-            'admin_name': 'name',
-            'admin_login': 'login',
-            'admin_password': 'password',
-            'admin_privilege': 'privilege'
-        },
-    ]
+    user_data = get_admins()
     request.session['user_data'] = user_data
     return render(request=request, template_name='exchange_app/admins.html', context={'user_data': user_data})
 
 
+@permission_required('auth.change_permission')
 @login_required()
 def change_admin(request, admin_id):
     admins_list = request.session['user_data']
@@ -125,6 +116,7 @@ def change_admin(request, admin_id):
     return render(request=request, template_name='exchange_app/admin.html', context=admin)
 
 
+@permission_required('auth.delete_permission')
 @login_required()
 def delete_admin(request, admin_id):
     print('delete ', admin_id)

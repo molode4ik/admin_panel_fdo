@@ -49,6 +49,7 @@
                                 <td>{{ user.FIO }}</td>
                                 <td>{{ user.Gradebook_number }}</td>
                                 <td>{{ user.Login }}</td>
+                                {% if perms.exchange_app.change_users %}
                                 <td>
                                     <form action="{% url 'user_edit' user.ID %}" method="POST">
                                         {% csrf_token %}
@@ -61,6 +62,7 @@
                                         <button class="btn btn-default" title="Delete"><i class="fa fa-sync-alt"></i>Удалить</button>
                                     </form>
                                 </td>
+                                {% endif %}
                             </tr>
                         {% endfor %}
                         </tbody>
