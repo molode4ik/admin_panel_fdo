@@ -124,7 +124,54 @@ def change_admin(request, admin_id):
 def delete_admin(request, admin_id):
     print('delete ', admin_id)
     return redirect('http://127.0.0.1:8000/admins/')
+def timetables(request):
+    search_query = request.POST.get('search')
+    # запрос с сервера на расписание
 
+    #приходит запрос с словарем где ключи это id группы этот словарь содержит список с словарем расписания группы
+    id = ['1', '2', '3', '4']
+    shedule = [
+        {
+            "date": "22-10-2022",
+            "day": "Понедельник",
+            "time": "8:30",
+            "lesson": "Умный дом",
+            "room": "Г 603",
+            "teacher": "Парыгин Д.С."
+        },
+        {
+            "date": "22-12-2022",
+            "day": "Понедельник",
+            "time": "10:30",
+            "lesson": "Управление данными",
+            "room": "Г 602",
+            "teacher": "Аникин А.В."
+        },
+        {
+            "date": "22-19-2022",
+            "day": "Вторник",
+            "time": "10:30",
+            "lesson": "Управление данными",
+            "room": "Г 602",
+            "teacher": "Аникин А.В."
+        },
+        {
+            "date": "22-27-2022",
+            "day": "Вторник",
+            "time": "10:30",
+            "lesson": "Управление данными",
+            "room": "Г 602",
+            "teacher": "Аникин А.В."
+        },
+    ]
+    if request.method == 'POST':
+
+
+        number = ['1','2','3','4']
+        return render(request=request, template_name='exchange_app/timetable.html',context={'shedule': shedule, 'id':id, 'number':number})
+    number = [str(i) for i in range(59)]
+    request.session["search"] = search_query
+    return render(request=request, template_name='exchange_app/timetable.html',context={'number':number})
 
 def debts(request):
     if request.method == 'POST' and request.FILES:

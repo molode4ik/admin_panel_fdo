@@ -8,8 +8,8 @@
 {% block content %}
     <form action="" method="POST">
     {% csrf_token %}
-    <input value="{{ admin_name }}" name="admin_name">
-    <input value="{{ admin_privilege }}" name="admin_privilege">
+    <input value="{{ admin_name }}" name="admin_name" pattern="[a-zа-яА-ЯA-ZЁё]" title="только буквы">
+    <input value="{{ admin_privilege }}" name="admin_privilege" pattern="[a-zа-яА-ЯA-ZЁё]" title="только буквы">
         <button class="" type="submit"> Изменить </button>
     </form>
 
