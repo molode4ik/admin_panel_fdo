@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login
 from .scripts import *
 from .api_requests import *
-
+import re
 
 def auth(request):
     if request.user.is_authenticated and request.session['user_password']:
