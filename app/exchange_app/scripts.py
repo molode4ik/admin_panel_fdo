@@ -1,11 +1,9 @@
-import requests
+import json
+import os
+import hashlib
 from django.contrib.auth.models import User, Group
 from django.core.files.storage import FileSystemStorage
-import json
-#from .config import Requests
-import os
 from .api_requests import admin_auth
-import hashlib
 
 
 def check_auth(username: str, password: str) -> [bool, int]:

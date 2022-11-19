@@ -50,11 +50,15 @@
                                 {% if perms.auth.change_permission %}
                                     <td><a href="/admins/{{ admin.admin_id }}">Подробнее</a></td>
                                     <td><a href="/admins/delete_admin/{{ admin.admin_id }}">Удалить</a></td>
+
                                 {% endif %}
                             </tr>
                         {% endfor %}
                         </tbody>
                     </table>
+                    {% if perms.auth.change_permission %}
+                        <a href="/admins/create_admin/">Создать</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

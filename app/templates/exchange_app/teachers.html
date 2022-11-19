@@ -36,8 +36,8 @@
                         {% for teacher in teachers_data %}
                             <tr>
                                 <td>{{ teacher.teacher_id }}</td>
-                                <td>{{ teacher.FIO }}</td>
-                                <td>{{ teacher.Telephone_hunber }}</td>
+                                <td>{{ teacher.teacher_name }}</td>
+                                <td>{{ teacher.teacher_phone }}</td>
                                 <td>
                                     <form action="" method="POST">
                                         {% csrf_token %}

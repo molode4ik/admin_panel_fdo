@@ -14,17 +14,36 @@ def get_admins() -> list:
     return req.json()
 
 
-def get_students():
+def get_students() -> list:
     req = requests.post(api_url + 'get_students')
     return req.json()
 
 
-def get_groups():
+def get_groups() -> list:
     req = requests.post(api_url + 'get_groups')
     return req.json()
 
 
 def get_shedule(group_name: str):
     req = requests.post(api_url + '/get_groups/shedule/'+group_name)
+    return req.json()
+
+
+def get_teachers() -> list:
+    req = requests.post(api_url + 'get_teachers')
+    return req.json()
+
+
+def update_admin(send_data: dict):
+    req = requests.post(api_url + 'update_admin', json=send_data)
+    return req.json()
+
+
+def delete_admin_id(admin_id: int):
+    req = requests.post(api_url + 'delete_admin/' + str(admin_id))
+
+
+def add_admin(send_data: dict):
+    req = requests.post(api_url + 'create_admin', json=send_data)
     return req.json()
 
