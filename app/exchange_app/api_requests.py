@@ -17,3 +17,14 @@ def get_admins() -> list:
 def get_students():
     req = requests.post(api_url + 'get_students')
     return req.json()
+
+
+def get_groups():
+    req = requests.post(api_url + 'get_groups')
+    return req.json()
+
+
+def get_shedule(group_name: str):
+    req = requests.post(api_url + '/get_groups/shedule/'+group_name)
+    return req.json()
+

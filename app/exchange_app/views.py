@@ -3,9 +3,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login
 from .scripts import check_auth, search_users, hash_password, search_user, search_admin, parse_file
 import json, csv
-#from .config import Requests
-from .api_requests import get_admins, get_students
-
+from .api_requests import get_admins, get_students, get_groups, get_shedule
 
 
 def auth(request):
@@ -55,7 +53,6 @@ def teachers(request):
     ]
 
     if request.method == 'POST' and request.FILES:
-
         uploaded_file = request.FILES["document"]
         data = parse_file(uploaded_file)
         print(data)
@@ -124,10 +121,13 @@ def change_admin(request, admin_id):
 def delete_admin(request, admin_id):
     print('delete ', admin_id)
     return redirect('http://127.0.0.1:8000/admins/')
+
+
+@permission_required('exchange_app.view_post')
+@login_required()
 def timetables(request):
     search_query = request.POST.get('search')
-    # запрос с сервера на расписание
-
+    ids = get_groups
     #приходит запрос с словарем где ключи это id группы этот словарь содержит список с словарем расписания группы
     id = ['1', '2', '3', '4']
     shedule = [
@@ -165,17 +165,18 @@ def timetables(request):
         },
     ]
     if request.method == 'POST':
-
-
-        number = ['1','2','3','4']
+        number = ['1', '2', '3', '4']
+        print(get_shedule(search_query))
         return render(request=request, template_name='exchange_app/timetable.html',context={'shedule': shedule, 'id':id, 'number':number})
     number = [str(i) for i in range(59)]
     request.session["search"] = search_query
-    return render(request=request, template_name='exchange_app/timetable.html',context={'number':number})
+    return render(request=request, template_name='exchange_app/timetable.html', context={'number':number})
 
+
+@permission_required('exchange_app.change_post')
+@login_required()
 def debts(request):
     if request.method == 'POST' and request.FILES:
-
         uploaded_file = request.FILES["document"]
         print(uploaded_file)
     return render(request=request, template_name='exchange_app/debts.html', context={})

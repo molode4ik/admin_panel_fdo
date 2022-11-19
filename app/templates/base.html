@@ -50,9 +50,14 @@
                       <a class="nav-link" href="/admins">Админы</a>
                     </li>
                 {% endif %}
-                {% if perms.exchange_app.view_teachers%}
+                {% if perms.exchange_app.view_teachers %}
                     <li class="nav-item">
                       <a class="nav-link" href="/teachers">Учителя</a>
+                    </li>
+                {% endif %}
+                {% if perms.exchange_app.view_post %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="/debts">debts??</a>
                     </li>
                 {% endif %}
                 <li class="nav-item">
