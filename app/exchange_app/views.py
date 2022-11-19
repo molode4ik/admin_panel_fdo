@@ -180,6 +180,46 @@ def timetables(request):
     request.session["search"] = search_query
     return render(request=request, template_name='exchange_app/timetable.html', context={'number':number})
 
+def table_request(request):
+
+
+    table = [
+        {
+            "id": "88",
+            "FIO": "Хорошун Данил Алексеевич",
+            "numbers": "89876561278",
+            "record_book": "432123",
+            "view_requests": "Смена пароля"
+
+        },
+        {
+            "id": "89",
+            "FIO": "Соколов Денис Александрович",
+            "numbers": "897686544319",
+            "record_book": "980543",
+            "view_requests": "подтверждение зачетки"
+        },
+        {
+            "id": "90",
+            "FIO": "Ряпалов Дмитрий Николаевич",
+            "numbers": "89172191267",
+            "record_book": "970676",
+            "view_requests": "Chill"
+        }
+        ]
+
+    if request.method == 'POST':
+        data = request.POST['data']
+        data_id = re.findall('(\d+)', data)
+        data_users = [i for i in table if i['id'] == data_id[0]]
+
+        return render(request=request, template_name='exchange_app/edit_requests.html', context={ 'data_users': data_users})
+    return render(request=request, template_name='exchange_app/table_request.html', context={'table': table})
+
+def edit_requests(request):
+
+    return render(request=request, template_name='exchange_app/edit_requests.html')
+
 
 @permission_required('exchange_app.change_post')
 @login_required()
