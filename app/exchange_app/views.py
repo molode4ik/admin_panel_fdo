@@ -158,50 +158,12 @@ def create_admin(request):
 @login_required()
 def timetables(request):
     search_query = request.POST.get('search')
-    ids = get_groups
-    #приходит запрос с словарем где ключи это id группы этот словарь содержит список с словарем расписания группы
-    id = ['1', '2', '3', '4']
-    shedule = [
-        {
-            "date": "22-10-2022",
-            "day": "Понедельник",
-            "time": "8:30",
-            "lesson": "Умный дом",
-            "room": "Г 603",
-            "teacher": "Парыгин Д.С."
-        },
-        {
-            "date": "22-12-2022",
-            "day": "Понедельник",
-            "time": "10:30",
-            "lesson": "Управление данными",
-            "room": "Г 602",
-            "teacher": "Аникин А.В."
-        },
-        {
-            "date": "22-19-2022",
-            "day": "Вторник",
-            "time": "10:30",
-            "lesson": "Управление данными",
-            "room": "Г 602",
-            "teacher": "Аникин А.В."
-        },
-        {
-            "date": "22-27-2022",
-            "day": "Вторник",
-            "time": "10:30",
-            "lesson": "Управление данными",
-            "room": "Г 602",
-            "teacher": "Аникин А.В."
-        },
-    ]
+    ids = get_groups()
     if request.method == 'POST':
-        number = ['1', '2', '3', '4']
-        print(get_shedule(search_query))
-        return render(request=request, template_name='exchange_app/timetable.html',context={'shedule': shedule, 'id':id, 'number':number})
-    number = [str(i) for i in range(59)]
+        shedule = get_shedule(search_query)
+        return render(request=request, template_name='exchange_app/timetable.html', context={'shedule': shedule, 'number': ids})
     request.session["search"] = search_query
-    return render(request=request, template_name='exchange_app/timetable.html', context={'number':number})
+    return render(request=request, template_name='exchange_app/timetable.html', context={'number': ids})
 
 
 def table_request(request):

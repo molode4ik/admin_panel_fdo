@@ -25,7 +25,7 @@ def get_groups() -> list:
 
 
 def get_shedule(group_name: str):
-    req = requests.post(api_url + '/get_groups/shedule/'+group_name)
+    req = requests.post(api_url + 'get_groups/shedule/' + group_name)
     return req.json()
 
 

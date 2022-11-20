@@ -32,29 +32,29 @@
     </div>
  <div class="panel-body table-responsive">
      <table class="table">
-         <thead >
-                            <tr>
-                                <th scope="col">Дата</th>
-                                <th scope="col">День</th>
-                                <th scope="col">Время</th>
-                                <th scope="col">Предмет</th>
-                                   <th scope="col">Кабинет</th>
-                                <th scope="col">Преподователь</th>
-
-                            </tr>
-                        </thead>
-              <tbody>
-                    {% for user in shedule %}
-                            <tr>
-                                 <td>{{ user.date }}</td>
-                                <td>{{ user.day }}</td>
-                                <td>{{ user.time }}</td>
-                                <td>{{ user.lesson }}</td>
-                                <td>{{ user.room }}</td>
-                                <td>{{ user.teacher }}</td>
-
-                            </tr>
-                    {% endfor %}
+        <thead>
+            <tr>
+                <th scope="col">Дата</th>
+                <th scope="col">День</th>
+                <th scope="col">Время</th>
+                <th scope="col">Предмет</th>
+                <th scope="col">Кабинет</th>
+                <th scope="col">Преподователь</th>
+                <th scope="col">Тип занятия</th>
+            </tr>
+        </thead>
+            <tbody>
+                {% for user in shedule %}
+                    <tr>
+                        <td>{{ user.date }}</td>
+                        <td>{{ user.day_of_week }}</td>
+                        <td>{{ user.time }}</td>
+                        <td>{{ user.subject }}</td>
+                        <td>{{ user.class_type }}</td>
+                        <td>{{ user.teacher }}</td>
+                        <td>{{ user.department }}</td>
+                    </tr>
+                {% endfor %}
               </tbody>
      </table>
  </div>
