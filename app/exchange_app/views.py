@@ -157,12 +157,12 @@ def create_admin(request):
 @permission_required('exchange_app.view_post')
 @login_required()
 def timetables(request):
-    search_query = request.POST.get('search')
     ids = get_groups()
     if request.method == 'POST':
+        search_query = request.POST.get('search')
         shedule = get_shedule(search_query)
+        request.session["search"] = search_query
         return render(request=request, template_name='exchange_app/timetable.html', context={'shedule': shedule, 'number': ids})
-    request.session["search"] = search_query
     return render(request=request, template_name='exchange_app/timetable.html', context={'number': ids})
 
 
