@@ -11,14 +11,16 @@
     <div class="frame">
         <div ng-app ng-init="checked = false">
             <form class="form-signin" action="" method="post" name="form">
-              <label for="fullname">Фамилия</label>
-                <input class="form-styling" type="text" name="username" placeholder=""/>
-              <label for="fullname">Имя</label>
-                <input class="form-styling" type="text" name="username" placeholder=""/>
-              <label for="fullname">Отчество</label>
-                <input class="form-styling" type="text" name="username" placeholder=""/>
-              <label for="dlno">Номер телефона</label>
-                <input class="form-styling" type="text" name="username" placeholder=""/>
+                <label for="fullname">Фамилия</label>
+                    <input class="form-styling" type="text" name="lastname" placeholder=""/>
+                <label for="fullname">Имя</label>
+                    <input class="form-styling" type="text" name="firstname" placeholder=""/>
+                <label for="fullname">Отчество</label>
+                    <input class="form-styling" type="text" name="middlename" placeholder=""/>
+                <label for="dlno">Номер телефона</label>
+                    <input class="form-styling" type="text" name="phone" placeholder=""/>
+                <label for="dlno">email</label>
+                    <input class="form-styling" type="text" name="email" placeholder=""/>
                 <div class="btn-animate">
                     <form action="{% url 'teachers' %}" method="POST">
                         {% csrf_token %}

@@ -47,3 +47,7 @@ def add_admin(send_data: dict):
     req = requests.post(api_url + 'create_admin', json=send_data)
     return req.json()
 
+
+def create_teacher(send_data: dict):
+    req = requests.post(api_url + 'create_teacher', json=send_data)
+    return req.json()

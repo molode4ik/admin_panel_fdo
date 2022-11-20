@@ -62,6 +62,12 @@ def search_admin(admins: list, admin_id: int) -> dict:
             return admin
 
 
+def search_teacher(teachers: list, teacher_id: int) -> dict:
+    for teacher in teachers:
+        if teacher_id == teacher.get('teacher_id'):
+            return teacher
+
+
 def parse_file(uploaded_file):
     if uploaded_file.name != '':
         if uploaded_file.content_type == 'application/json':
