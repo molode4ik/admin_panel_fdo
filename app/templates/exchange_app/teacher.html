@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input value="{{ teacher_name }}" name="teacher_name"  title="только буквы">
+        <input value="{{ teacher_phone }}" name="teacher_phone"  title="только цифры">
+        <input value="{{ teacher_email }}" name="teacher_email"  title="email">
+        <button class="" type="submit"> Изменить </button>
+    </form>
+
+{% endblock %}

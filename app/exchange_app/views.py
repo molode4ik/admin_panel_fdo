@@ -66,7 +66,6 @@ def add_teacher(request):
 def change_teacher(request, teacher_id):
     teachers_list = request.session['teachers']
     teacher = search_teacher(teachers_list, teacher_id)
-    print(teacher)
     if request.method == "POST":
         send_data = {
             'teacher_id': teacher.get('teacher_id'),
@@ -74,7 +73,6 @@ def change_teacher(request, teacher_id):
             'teacher_phone': request.POST.get('teacher_phone'),
             'teacher_email': request.POST.get('teacher_email'),
         }
-        print(send_data)
         #update_admin(send_data)
         return redirect('/teachers')
     return render(request=request, template_name='exchange_app/teacher.html', context=teacher)
@@ -83,7 +81,6 @@ def change_teacher(request, teacher_id):
 @permission_required("exchange_app.delete_teachers")
 @login_required()
 def del_teacher(request, teacher_id):
-    print(teacher_id)
     #delete_admin_id(admin_id)
     return redirect('/teachers')
 
@@ -115,7 +112,6 @@ def user_edit(request, user_id):
 @login_required()
 def admins(request):
     admins_data = get_admins()
-    print(admins_data)
     request.session['admins_data'] = admins_data
     return render(request=request, template_name='exchange_app/admins.html', context={'admins_data': admins_data})
 
