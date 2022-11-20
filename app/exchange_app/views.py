@@ -166,6 +166,13 @@ def timetables(request):
     return render(request=request, template_name='exchange_app/timetable.html', context={'number': ids})
 
 
+@permission_required('exchange_app.view_post')
+@login_required()
+def update_timetable(request):
+    update_shedule()
+    return redirect('/timetable')
+
+
 def table_request(request):
     table = [
         {

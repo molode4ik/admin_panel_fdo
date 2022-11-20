@@ -29,6 +29,10 @@ def get_shedule(group_name: str):
     return req.json()
 
 
+def update_shedule():
+    req = requests.post(api_url + 'update_shedule')
+
+
 def get_teachers() -> list:
     req = requests.post(api_url + 'get_teachers')
     return req.json()

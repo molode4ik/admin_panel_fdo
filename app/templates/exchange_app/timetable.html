@@ -14,23 +14,15 @@
     <form action="{% url 'timetables' %}" method="POST">
         {% csrf_token %}
     <select class="form-select form-select-lg mb-3" name = 'search' aria-label=".form-select-lg example">
-
-              <option>Выбрать Направление</option>
-
-              {% for i in number %}
-
-              <option > {{ i }} </option>
-
-              {% endfor %}
-
-
+          {% for i in number %}
+            <option > {{ i }} </option>
+          {% endfor %}
     </select>
-
- <input type="submit">
-     </form>
-
-    </div>
- <div class="panel-body table-responsive">
+    <input type="submit" value="Подтвердить">
+        <a href="/update_timetable">Обновить расписание</a>
+    </form>
+</div>
+<div class="panel-body table-responsive">
      <table class="table">
         <thead>
             <tr>
@@ -58,10 +50,5 @@
               </tbody>
      </table>
  </div>
-
-
-
-
-
 </body>
 {% endblock %}

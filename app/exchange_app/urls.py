@@ -16,6 +16,7 @@ urlpatterns = [
     path('admins/', admins, name='admins'),
     path("logout/", LogoutView.as_view(), name='logout'),
     path('timetable/', timetables, name="timetables"),
+    path('update_timetable/', update_timetable, name="update_timetable"),
     path('edit_requests/', edit_requests, name="edit_requests"),
     path('table_requests/', table_request, name="table_requests"),
     path('admins/<int:admin_id>', change_admin, name='change_admin'),
