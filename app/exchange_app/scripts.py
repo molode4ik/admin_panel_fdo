@@ -1,11 +1,9 @@
-import requests
+import json
+import os
+import hashlib
 from django.contrib.auth.models import User, Group
 from django.core.files.storage import FileSystemStorage
-import json
-#from .config import Requests
-import os
 from .api_requests import admin_auth
-import hashlib
 
 
 def check_auth(username: str, password: str) -> [bool, int]:
@@ -62,6 +60,12 @@ def search_admin(admins: list, admin_id: int) -> dict:
     for admin in admins:
         if admin_id == admin.get('admin_id'):
             return admin
+
+
+def search_debt(debts: list, debt_id: int) -> list:
+    for debt in debts:
+        if debt_id == debt.get('academic_id'):
+            return debt
 
 
 def parse_file(uploaded_file):

@@ -1,22 +1,22 @@
+import json, csv
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login
-from .scripts import check_auth, search_users, hash_password, search_user, search_admin, parse_file
-import json, csv
-#from .config import Requests
-from .api_requests import get_admins, get_students
-
+from .scripts import *
+from .api_requests import *
 
 
 def auth(request):
-    if request.user.is_authenticated:
-        return redirect("index/")
+    if request.user.is_authenticated and request.session['user_password']:
+        if check_auth(request.user.username, request.session['user_password']):
+            return redirect("index/")
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         if check_auth(username=username, password=password):
             user = authenticate(username=username, password=password)
             login(request, user)
+            request.session['user_password'] = password
             print(user.get_group_permissions())
             return redirect("index/")
     return render(request=request, template_name='exchange_app/login.html')
@@ -36,26 +36,9 @@ def index(request):
 @permission_required("exchange_app.view_teachers")
 @login_required()
 def teachers(request):
-    teachers_data = [
-        {
-            "teacher_id": 1,
-            "FIO": "Фоыр Фваы Соцфв",
-            "Telephone_hunber": "88005553535"
-        },
-        {
-            "teacher_id": 2,
-            "FIO": "Кошфц Чвлцф БЬцвцф",
-            "Telephone_hunber": "89996663344"
-        },
-        {
-            "teacher_id": 3,
-            "FIO": "Даыфв Сфыдв ГУаол",
-            "Telephone_hunber": "85753150909"
-        },
-    ]
-
+    teachers_data = get_teachers()
+    print(teachers_data)
     if request.method == 'POST' and request.FILES:
-
         uploaded_file = request.FILES["document"]
         data = parse_file(uploaded_file)
         print(data)
@@ -64,7 +47,15 @@ def teachers(request):
     return render(request=request, template_name='exchange_app/teachers.html', context={'teachers_data': teachers_data})
 
 
+@permission_required("exchange_app.delete_teachers")
+@login_required()
 def add_teacher(request):
+    return render(request=request, template_name='exchange_app/add_teacher.html', context={})
+
+
+@permission_required("exchange_app.change_teachers")
+@login_required()
+def change_teacher(request):
     return render(request=request, template_name='exchange_app/add_teacher.html', context={})
 
 
@@ -111,10 +102,11 @@ def change_admin(request, admin_id):
     admin = search_admin(admins_list, admin_id)
     if request.method == "POST":
         send_data = {
-            'admin_name': request.POST.get('admin_name'),
-            'admin_privilege': request.POST.get('admin_privilege')
+            'admin_id': admin_id,
+            'name': request.POST.get('admin_name'),
+            'privilege': request.POST.get('admin_privilege')
         }
-        print(send_data)
+        update_admin(send_data)
         return redirect('http://127.0.0.1:8000/admins/')
     return render(request=request, template_name='exchange_app/admin.html', context=admin)
 
@@ -122,12 +114,28 @@ def change_admin(request, admin_id):
 @permission_required('auth.delete_permission')
 @login_required()
 def delete_admin(request, admin_id):
-    print('delete ', admin_id)
+    delete_admin_id(admin_id)
     return redirect('http://127.0.0.1:8000/admins/')
+
+
+def create_admin(request):
+    if request.method == "POST":
+        send_data = {
+            'name': request.POST.get('admin_name'),
+            'login': request.POST.get('admin_login'),
+            'password': hash_password(request.POST.get('admin_password')),
+            'privilege': request.POST.get('admin_privilege'),
+        }
+        add_admin(send_data)
+        return redirect('http://127.0.0.1:8000/admins/')
+    return render(request=request, template_name='exchange_app/create_admin.html')
+
+
+@permission_required('exchange_app.view_post')
+@login_required()
 def timetables(request):
     search_query = request.POST.get('search')
-    # запрос с сервера на расписание
-
+    ids = get_groups
     #приходит запрос с словарем где ключи это id группы этот словарь содержит список с словарем расписания группы
     id = ['1', '2', '3', '4']
     shedule = [
@@ -165,17 +173,31 @@ def timetables(request):
         },
     ]
     if request.method == 'POST':
-
-
-        number = ['1','2','3','4']
+        number = ['1', '2', '3', '4']
+        print(get_shedule(search_query))
         return render(request=request, template_name='exchange_app/timetable.html',context={'shedule': shedule, 'id':id, 'number':number})
     number = [str(i) for i in range(59)]
     request.session["search"] = search_query
-    return render(request=request, template_name='exchange_app/timetable.html',context={'number':number})
+    return render(request=request, template_name='exchange_app/timetable.html', context={'number':number})
 
+
+@permission_required('exchange_app.change_post')
+@login_required()
 def debts(request):
-    if request.method == 'POST' and request.FILES:
+    debts = get_all_academic_debts()
 
+    if request.method == 'POST' and request.FILES:
         uploaded_file = request.FILES["document"]
         print(uploaded_file)
-    return render(request=request, template_name='exchange_app/debts.html', context={})
+    request.session['debts'] = debts
+    return render(request=request, template_name='exchange_app/debts.html', context={"debts": debts})
+
+
+def debts_see_more(request, academic_id):
+    debts_list = request.session['debts']
+    debt = search_debt(debts_list, academic_id)
+    users = get_students()
+
+    user = search_user(users, debt["academic_student_id"])
+
+    return render(request=request, template_name='exchange_app/debts_see_more.html', context={ "debt": debt, "user": user})
