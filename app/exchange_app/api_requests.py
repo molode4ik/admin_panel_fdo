@@ -25,8 +25,12 @@ def get_groups() -> list:
 
 
 def get_shedule(group_name: str):
-    req = requests.post(api_url + '/get_groups/shedule/'+group_name)
+    req = requests.post(api_url + 'get_groups/shedule/' + group_name)
     return req.json()
+
+
+def update_shedule():
+    req = requests.post(api_url + 'update_shedule')
 
 
 def get_teachers() -> list:
@@ -54,4 +58,9 @@ def delete_admin_id(admin_id: int):
 
 def add_admin(send_data: dict):
     req = requests.post(api_url + 'create_admin', json=send_data)
+    return req.json()
+
+
+def create_teacher(send_data: dict):
+    req = requests.post(api_url + 'create_teacher', json=send_data)
     return req.json()

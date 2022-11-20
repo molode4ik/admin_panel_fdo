@@ -11,10 +11,7 @@
     <input accept=".csv, .json" type="file" name="document">
     <button type="submit">Загрузить</button>
 </form>
-<form action="{% url 'add_teacher' %}" method="POST">
-    {% csrf_token %}
-    <button class="btn btn-default" title="Add"><i class="fa fa-sync-alt"></i>Добавить</button>
-</form>
+<a href="add_teacher/">Создать</a>
 <div class="container">
     <div class="row">
         <div class="col-md-offset-1 col-md-10">
@@ -39,16 +36,10 @@
                                 <td>{{ teacher.teacher_name }}</td>
                                 <td>{{ teacher.teacher_phone }}</td>
                                 <td>
-                                    <form action="" method="POST">
-                                        {% csrf_token %}
-                                        <button class="btn btn-default" title="Edit"><i class="fa fa-sync-alt"></i>Редактировать</button>
-                                    </form>
+                                    <a href="/teachers/{{ teacher.teacher_id }}">Подробнее</a>
                                 </td>
                                 <td>
-                                    <form action="{% url 'teachers' %}" method="POST">
-                                        {% csrf_token %}
-                                        <button class="btn btn-default" title="Delete"><i class="fa fa-sync-alt"></i>Удалить</button>
-                                    </form>
+                                    <a href="/teachers/delete_teacher/{{ teacher.teacher_id }}">Удалить</a>
                                 </td>
                             </tr>
                         {% endfor %}

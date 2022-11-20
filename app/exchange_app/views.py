@@ -1,4 +1,5 @@
 import json, csv
+import re
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login
@@ -37,12 +38,11 @@ def index(request):
 @login_required()
 def teachers(request):
     teachers_data = get_teachers()
-    print(teachers_data)
+    request.session['teachers'] = teachers_data
     if request.method == 'POST' and request.FILES:
         uploaded_file = request.FILES["document"]
         data = parse_file(uploaded_file)
         print(data)
-
         #пройтись циклом по файлу
     return render(request=request, template_name='exchange_app/teachers.html', context={'teachers_data': teachers_data})
 
@@ -50,13 +50,39 @@ def teachers(request):
 @permission_required("exchange_app.delete_teachers")
 @login_required()
 def add_teacher(request):
+    if request.method == 'POST':
+        send_data = {
+            'name': f"{request.POST.get('lastname')} {request.POST.get('firstname')} {request.POST.get('middlename')}",
+            'email': request.POST.get('email'),
+            'phone': request.POST.get('phone')
+        }
+        create_teacher(send_data)
+        return redirect('/teachers')
     return render(request=request, template_name='exchange_app/add_teacher.html', context={})
 
 
 @permission_required("exchange_app.change_teachers")
 @login_required()
-def change_teacher(request):
-    return render(request=request, template_name='exchange_app/add_teacher.html', context={})
+def change_teacher(request, teacher_id):
+    teachers_list = request.session['teachers']
+    teacher = search_teacher(teachers_list, teacher_id)
+    if request.method == "POST":
+        send_data = {
+            'teacher_id': teacher.get('teacher_id'),
+            'name': request.POST.get('teacher_name'),
+            'teacher_phone': request.POST.get('teacher_phone'),
+            'teacher_email': request.POST.get('teacher_email'),
+        }
+        #update_admin(send_data)
+        return redirect('/teachers')
+    return render(request=request, template_name='exchange_app/teacher.html', context=teacher)
+
+
+@permission_required("exchange_app.delete_teachers")
+@login_required()
+def del_teacher(request, teacher_id):
+    #delete_admin_id(admin_id)
+    return redirect('/teachers')
 
 
 @permission_required("exchange_app.view_users")
@@ -67,9 +93,6 @@ def users(request):
     if request.method == 'POST':
         if search_query:
             find_data = search_users(str(search_query), user_data)
-            print(type(search_query))
-            print(user_data)
-            print(find_data)
             user_data = find_data
 
     request.session['user_data'] = user_data
@@ -81,7 +104,6 @@ def users(request):
 def user_edit(request, user_id):
     user_list = request.session['user_data']
     user = search_user(user_list, user_id)
-    print(user)
     user_FIO = [user_list[0]["student_lastname"], user_list[0]["student_firstname"], user_list[0]["student_middlename"]]
     return render(request=request, template_name='exchange_app/user_edit.html', context={'user': user, 'user_FIO': user_FIO})
 
@@ -90,7 +112,6 @@ def user_edit(request, user_id):
 @login_required()
 def admins(request):
     admins_data = get_admins()
-    print(admins_data)
     request.session['admins_data'] = admins_data
     return render(request=request, template_name='exchange_app/admins.html', context={'admins_data': admins_data})
 
@@ -107,7 +128,7 @@ def change_admin(request, admin_id):
             'privilege': request.POST.get('admin_privilege')
         }
         update_admin(send_data)
-        return redirect('http://127.0.0.1:8000/admins/')
+        return redirect('/admins')
     return render(request=request, template_name='exchange_app/admin.html', context=admin)
 
 
@@ -115,9 +136,11 @@ def change_admin(request, admin_id):
 @login_required()
 def delete_admin(request, admin_id):
     delete_admin_id(admin_id)
-    return redirect('http://127.0.0.1:8000/admins/')
+    return redirect('/admins')
 
 
+@permission_required('auth.delete_permission')
+@login_required()
 def create_admin(request):
     if request.method == "POST":
         send_data = {
@@ -127,58 +150,67 @@ def create_admin(request):
             'privilege': request.POST.get('admin_privilege'),
         }
         add_admin(send_data)
-        return redirect('http://127.0.0.1:8000/admins/')
+        return redirect('/admins')
     return render(request=request, template_name='exchange_app/create_admin.html')
 
 
 @permission_required('exchange_app.view_post')
 @login_required()
 def timetables(request):
-    search_query = request.POST.get('search')
-    ids = get_groups
-    #приходит запрос с словарем где ключи это id группы этот словарь содержит список с словарем расписания группы
-    id = ['1', '2', '3', '4']
-    shedule = [
-        {
-            "date": "22-10-2022",
-            "day": "Понедельник",
-            "time": "8:30",
-            "lesson": "Умный дом",
-            "room": "Г 603",
-            "teacher": "Парыгин Д.С."
-        },
-        {
-            "date": "22-12-2022",
-            "day": "Понедельник",
-            "time": "10:30",
-            "lesson": "Управление данными",
-            "room": "Г 602",
-            "teacher": "Аникин А.В."
-        },
-        {
-            "date": "22-19-2022",
-            "day": "Вторник",
-            "time": "10:30",
-            "lesson": "Управление данными",
-            "room": "Г 602",
-            "teacher": "Аникин А.В."
-        },
-        {
-            "date": "22-27-2022",
-            "day": "Вторник",
-            "time": "10:30",
-            "lesson": "Управление данными",
-            "room": "Г 602",
-            "teacher": "Аникин А.В."
-        },
-    ]
+    ids = get_groups()
     if request.method == 'POST':
-        number = ['1', '2', '3', '4']
-        print(get_shedule(search_query))
-        return render(request=request, template_name='exchange_app/timetable.html',context={'shedule': shedule, 'id':id, 'number':number})
-    number = [str(i) for i in range(59)]
-    request.session["search"] = search_query
-    return render(request=request, template_name='exchange_app/timetable.html', context={'number':number})
+        search_query = request.POST.get('search')
+        shedule = get_shedule(search_query)
+        request.session["search"] = search_query
+        return render(request=request, template_name='exchange_app/timetable.html', context={'shedule': shedule, 'number': ids})
+    return render(request=request, template_name='exchange_app/timetable.html', context={'number': ids})
+
+
+@permission_required('exchange_app.view_post')
+@login_required()
+def update_timetable(request):
+    update_shedule()
+    return redirect('/timetable')
+
+
+def table_request(request):
+    table = [
+        {
+            "id": "88",
+            "FIO": "Хорошун Данил Алексеевич",
+            "numbers": "89876561278",
+            "record_book": "432123",
+            "view_requests": "Смена пароля"
+
+        },
+        {
+            "id": "89",
+            "FIO": "Соколов Денис Александрович",
+            "numbers": "897686544319",
+            "record_book": "980543",
+            "view_requests": "подтверждение зачетки"
+        },
+        {
+            "id": "90",
+            "FIO": "Ряпалов Дмитрий Николаевич",
+            "numbers": "89172191267",
+            "record_book": "970676",
+            "view_requests": "Chill"
+        }
+        ]
+
+    if request.method == 'POST':
+        data = request.POST['data']
+        data_id = re.findall('(\d+)', data)
+        data_users = [i for i in table if i['id'] == data_id[0]]
+
+        return render(request=request, template_name='exchange_app/edit_requests.html', context={ 'data_users': data_users})
+    return render(request=request, template_name='exchange_app/table_request.html', context={'table': table})
+
+
+def edit_requests(request):
+
+    return render(request=request, template_name='exchange_app/edit_requests.html')
 
 
 @permission_required('exchange_app.change_post')

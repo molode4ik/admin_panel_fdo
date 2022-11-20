@@ -68,6 +68,12 @@ def search_debt(debts: list, debt_id: int) -> list:
             return debt
 
 
+def search_teacher(teachers: list, teacher_id: int) -> dict:
+    for teacher in teachers:
+        if teacher_id == teacher.get('teacher_id'):
+            return teacher
+
+
 def parse_file(uploaded_file):
     if uploaded_file.name != '':
         if uploaded_file.content_type == 'application/json':
@@ -80,4 +86,3 @@ def parse_file(uploaded_file):
                     pass
             os.remove("media/" + filename)
             return data
-
