@@ -53,6 +53,10 @@ def update_teacher(send_data: dict):
     req = requests.post(api_url + 'update_teacher', json=send_data)
     return req.json()
 
+def delete_debt(debt_id: int):
+    req = requests.post(api_url + 'delete_academic_debts/' + str(debt_id))
+    return req.json()
+
 
 def get_all_academic_debts() -> list:
     req = requests.post(api_url + 'get_all_academic_debts')
