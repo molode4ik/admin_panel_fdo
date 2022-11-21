@@ -53,8 +53,14 @@ def update_teacher(send_data: dict):
     req = requests.post(api_url + 'update_teacher', json=send_data)
     return req.json()
 
+
 def delete_debt(debt_id: int):
     req = requests.post(api_url + 'delete_academic_debts/' + str(debt_id))
+    return req.json()
+
+
+def del_money_debt(money_id: int):
+    req = requests.post(api_url + 'delete_money_debts/' + str(money_id))
     return req.json()
 
 
@@ -66,6 +72,7 @@ def get_all_academic_debts() -> list:
 def get_all_money_debts() -> list:
     req = requests.post(api_url + 'get_all_money_debts')
     return req.json()
+
 
 def update_admin(send_data: dict):
     req = requests.post(api_url + 'update_admin', json=send_data)
@@ -98,5 +105,14 @@ def get_error_requests():
 
 def del_error_request(error_id: int):
     req = requests.post(api_url + 'delete_error_request/' + str(error_id))
-    print(req.json())
+    return req.json()
+
+
+def confirm_req(confirm_id: int):
+    req = requests.post(api_url + 'confirm_confirmation_request/' + str(confirm_id))
+    return req.json()
+
+
+def delete_confirm_req(confirm_id: int):
+    req = requests.post(api_url + 'delete_confirmation_request/' + str(confirm_id))
     return req.json()

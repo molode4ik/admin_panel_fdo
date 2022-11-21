@@ -28,6 +28,7 @@
         {% if errors %}
             <table class="table">
                 <thead>
+                Фидбек
                 <tr>
                     <th scope="col">id</th>
                     <th scope="col">id студента</th>
@@ -54,6 +55,7 @@
         {% if confirms %}
             <table class="table">
                 <thead>
+                Подтверждения
                 <tr>
                     <th scope="col">id</th>
                     <th scope="col">id студента</th>
@@ -72,7 +74,8 @@
                                     <td>{{ confirm.confirmation_lastname }} {{ confirm.confirmation_firstname }} {{ confirm.confirmation_middlename }}</td>
                                     <td>{{ confirm.confirmation_file_path }}</td>
                                     <td>{{ confirm.confirmation_record_number }}</td>
-                                    <td><a href="delete_confirm/{{ confirm.confirmation_id }}">Удалить</a></td>
+                                    <td><a href="confirm_request/{{ confirm.confirmation_id }}">Подтвердить</a></td>
+                                    <td><a href="delete_confirm_request/{{ confirm.confirmation_id }}">Удалить</a></td>
                                 </tr>
                             {% endfor %}
                     </form>

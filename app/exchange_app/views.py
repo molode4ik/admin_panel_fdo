@@ -7,6 +7,7 @@ from .scripts import *
 from .api_requests import *
 from django.contrib import messages
 
+
 def auth(request):
     if request.user.is_authenticated and request.session['user_password']:
         if check_auth(request.user.username, request.session['user_password']):
@@ -180,10 +181,7 @@ def create_admin(request):
 @permission_required('exchange_app.view_post')
 @login_required()
 def timetables(request):
-
     ids = get_groups()
-
-
     if request.method == 'POST':
         search_query = request.POST.get('search')
         shedule = get_shedule(search_query)
@@ -201,20 +199,7 @@ def update_timetable(request):
         messages.info(request, 'Обновление расписания прошло успешно')
     else:
         messages.info(request, 'Обновить расписание не удалось')
-    return redirect('/timetable', contetx={'flag':flag})
-
-
-@permission_required('exchange_app.view_post')
-@login_required()
-def table_request(request):
-    conf_request = get_conf_requests()
-    # if request.method == 'POST':
-    #     data = request.POST['data']
-    #     data_id = re.findall('(\d+)', data)
-    #     data_users = [i for i in erors if i['id'] == data_id[0]]
-    #     return render(request=request, template_name='exchange_app/edit_requests.html',
-    #                   context={'data_users': data_users})
-    return render(request=request, template_name='exchange_app/table_request.html', context={'confirms': conf_request})
+    return redirect('/timetable', contetx={'flag': flag})
 
 
 @permission_required('exchange_app.view_post')
@@ -245,10 +230,24 @@ def table_request_confirms(request):
 
 @permission_required('exchange_app.change_post')
 @login_required()
-def remove_confirm_request(request, confirm_id):
-    print('aye')
-    #flag = del_confirm_request(confirm_id)
-    return redirect('/confirms/')#,context = {'flag':flag})
+def confirm_request(request, confirm_id):
+    flag = confirm_req(confirm_id)
+    if flag != -1:
+        messages.info(request, 'Подтверждение прошло успешно')
+    else:
+        messages.info(request, 'Подтверждение не удалось')
+    return redirect('/confirms/', context={'flag': flag})
+
+
+@permission_required('exchange_app.change_post')
+@login_required()
+def delete_confirm_request(request, confirm_id):
+    flag = delete_confirm_req(confirm_id)
+    if flag != -1:
+        messages.info(request, 'Удаление прошло успешно')
+    else:
+        messages.info(request, 'Удаление не удалось')
+    return redirect('/confirms/', context={'flag': flag})
 
 
 @permission_required('exchange_app.change_post')
@@ -260,12 +259,12 @@ def edit_requests(request):
 @permission_required('exchange_app.change_post')
 @login_required()
 def debts(request):
-    debts = get_all_academic_debts()
+    all_debts = get_all_academic_debts()
     if request.method == 'POST' and request.FILES:
         uploaded_file = request.FILES["document"]
         print(uploaded_file)
-    request.session['debts'] = debts
-    return render(request=request, template_name='exchange_app/debts.html', context={"debts": debts})
+    request.session['debts'] = all_debts
+    return render(request=request, template_name='exchange_app/debts.html', context={"debts": all_debts})
 
 
 @permission_required('exchange_app.change_post')
@@ -273,19 +272,27 @@ def debts(request):
 def debts_see_more(request, academic_id):
     debts_list = request.session['debts']
     debt = search_debt(debts_list, academic_id)
-    users = get_students()
-
-    user = search_user(users, debt["academic_student_id"])
-
+    students = get_students()
+    student = search_user(students, debt["academic_student_id"])
     return render(request=request, template_name='exchange_app/debts_see_more.html',
-                  context={"debt": debt, "user": user})
+                  context={"debt": debt, "user": student})
 
 
+@permission_required('exchange_app.change_post')
 @login_required()
-def delete_debts(request, academic_id):
+def delete_money_debt(request, money_id):
+    flag = del_money_debt(money_id)
+    if flag != -1:
+        messages.info(request, 'Удаление задолжности прошло успешно')
+    else:
+        messages.info(request, 'Удалить задолжность не удалось')
+    return redirect('/debts')
 
+
+@permission_required('exchange_app.delete_post')
+@login_required()
+def delete_academic_debt(request, academic_id):
     flag = delete_debt(academic_id)
-
     if flag != -1:
         messages.info(request, 'Удаление задолжности прошло успешно')
     else:

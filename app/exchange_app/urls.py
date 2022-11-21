@@ -19,14 +19,14 @@ urlpatterns = [
     path('timetable/', timetables, name="timetables"),
     path('update_timetable/', update_timetable, name="update_timetable"),
     path('edit_requests/', edit_requests, name="edit_requests"),
-    path('table_requests/', table_request, name="table_requests"),
     path('errors/', table_request_errors, name='table_request_errors'),
     path('errors/delete_error/<int:error_id>', remove_error_request, name='remove_error_request'),
     path('confirms/', table_request_confirms, name='table_request_confirms'),
-    path('confirms/delete_confirm/<int:confirm_id>', remove_confirm_request, name='remove_confirm_request'),
+    path('confirms/confirm_request/<int:confirm_id>', confirm_request, name='confirm_request'),
+    path('confirms/delete_confirm_request/<int:confirm_id>', delete_confirm_request, name='delete_confirm_request'),
     path('admins/<int:admin_id>', change_admin, name='change_admin'),
     path('admins/delete_admin/<int:admin_id>', delete_admin, name='delete_admin'),
     path('admins/create_admin/', create_admin, name='create_admin'),
-    path('debts/delete_debts/<int:academic_id>',delete_debts, name='delete_debts')
+    path('debts/delete_academic_debt/<int:academic_id>', delete_academic_debt, name='delete_academic_debt')
 ]
 
