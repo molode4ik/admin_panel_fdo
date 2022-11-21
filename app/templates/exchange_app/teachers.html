@@ -6,11 +6,17 @@
 {% endblock %}
 
 {% block content %}
+
 <form enctype="multipart/form-data" method="post">
     {% csrf_token %}
     <input accept=".csv, .json" type="file" name="document">
     <button type="submit">Загрузить</button>
 </form>
+    <ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
 <a href="add_teacher/">Создать</a>
 <div class="container">
     <div class="row">
