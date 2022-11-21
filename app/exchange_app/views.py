@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login
 from .scripts import *
 from .api_requests import *
-
+from django.contrib import messages
 
 def auth(request):
     if request.user.is_authenticated and request.session['user_password']:
@@ -44,7 +44,7 @@ def teachers(request):
         data = parse_file(uploaded_file)
         print(data)
         # пройтись циклом по файлу
-    return render(request=request, template_name='exchange_app/teachers.html', context={'teachers_data': teachers_data})
+    return render(request=request, template_name='exchange_app/teachers.html', context={'teachers_data': teachers_data, 'flag':teachers_data})
 
 
 @permission_required("exchange_app.delete_teachers")
@@ -81,7 +81,11 @@ def change_teacher(request, teacher_id):
 @permission_required("exchange_app.delete_teachers")
 @login_required()
 def del_teacher(request, teacher_id):
-    delete_teacher(teacher_id)
+    flag = delete_teacher(teacher_id)
+    if flag != -1:
+        messages.info(request, 'Удаление учителя прошло успешно')
+    else:
+        messages.info(request, 'Удалить учителя не удалось')
     return redirect('/teachers')
 
 
@@ -94,6 +98,7 @@ def users(request):
         if search_query:
             find_data = search_users(str(search_query), user_data)
             user_data = find_data
+
 
     request.session['user_data'] = user_data
     print(request.session['user_data'])
@@ -127,7 +132,7 @@ def user_edit(request, user_id):
 def admins(request):
     admins_data = get_admins()
     request.session['admins_data'] = admins_data
-    return render(request=request, template_name='exchange_app/admins.html', context={'admins_data': admins_data})
+    return render(request=request, template_name='exchange_app/admins.html', context={'admins_data': admins_data,'flag':admins_data})
 
 
 @permission_required('auth.change_permission')
@@ -149,7 +154,11 @@ def change_admin(request, admin_id):
 @permission_required('auth.delete_permission')
 @login_required()
 def delete_admin(request, admin_id):
-    delete_admin_id(admin_id)
+    flag = delete_admin_id(admin_id)
+    if flag != -1:
+        messages.info(request, 'Удаление Админа прошло успешно')
+    else:
+        messages.info(request, 'Удалить Админа не удалось')
     return redirect('/admins')
 
 
@@ -171,7 +180,10 @@ def create_admin(request):
 @permission_required('exchange_app.view_post')
 @login_required()
 def timetables(request):
+
     ids = get_groups()
+
+
     if request.method == 'POST':
         search_query = request.POST.get('search')
         shedule = get_shedule(search_query)
@@ -184,8 +196,12 @@ def timetables(request):
 @permission_required('exchange_app.view_post')
 @login_required()
 def update_timetable(request):
-    update_shedule()
-    return redirect('/timetable')
+    flag = update_shedule()
+    if flag != -1:
+        messages.info(request, 'Обновление расписания прошло успешно')
+    else:
+        messages.info(request, 'Обновить расписание не удалось')
+    return redirect('/timetable', contetx={'flag':flag})
 
 
 @permission_required('exchange_app.view_post')
@@ -212,7 +228,11 @@ def table_request_errors(request):
 @permission_required('exchange_app.change_post')
 @login_required()
 def remove_error_request(request, error_id: int):
-    del_error_request(error_id)
+    flag = del_error_request(error_id)
+    if flag != -1:
+        messages.info(request, 'Удаление запрос прошло успешно')
+    else:
+        messages.info(request, 'Удалить запрос не удалось')
     return redirect('/errors/')
 
 
@@ -227,8 +247,8 @@ def table_request_confirms(request):
 @login_required()
 def remove_confirm_request(request, confirm_id):
     print('aye')
-    # del_confirm_request(confirm_id)
-    return redirect('/confirms/')
+    #flag = del_confirm_request(confirm_id)
+    return redirect('/confirms/')#,context = {'flag':flag})
 
 
 @permission_required('exchange_app.change_post')
@@ -259,3 +279,15 @@ def debts_see_more(request, academic_id):
 
     return render(request=request, template_name='exchange_app/debts_see_more.html',
                   context={"debt": debt, "user": user})
+
+
+@login_required()
+def delete_debts(request, academic_id):
+
+    flag = delete_debt(academic_id)
+
+    if flag != -1:
+        messages.info(request, 'Удаление задолжности прошло успешно')
+    else:
+        messages.info(request, 'Удалить задолжность не удалось')
+    return redirect('/debts')
