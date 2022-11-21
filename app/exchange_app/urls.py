@@ -26,6 +26,7 @@ urlpatterns = [
     path('confirms/delete_confirm/<int:confirm_id>', remove_confirm_request, name='remove_confirm_request'),
     path('admins/<int:admin_id>', change_admin, name='change_admin'),
     path('admins/delete_admin/<int:admin_id>', delete_admin, name='delete_admin'),
-    path('admins/create_admin/', create_admin, name='create_admin')
+    path('admins/create_admin/', create_admin, name='create_admin'),
+    path('debts/delete_debts/<int:academic_id>',delete_debts, name='delete_debts')
 ]
 
