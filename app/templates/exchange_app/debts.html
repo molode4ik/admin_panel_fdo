@@ -11,7 +11,11 @@
     <input accept=".csv, .json" type="file" name="document">
     <button type="submit">Загрузить</button>
 </form>
-
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
 <div class="container">
     <div class="row">
         <div class="col-md-offset-1 col-md-10">
@@ -46,9 +50,9 @@
                                     </form>
                                 </td>
                                 <td>
-                                    <form action="{% url 'debts' %}" method="POST">
+                                    <form action="" method="POST">
                                         {% csrf_token %}
-                                        <button class="btn btn-default" title="Delete"><i class="fa fa-sync-alt"></i>Удалить</button>
+                                        <a href="/debts/delete_debts/{{ debt.academic_id }} ">Удалить</a>
                                     </form>
                                 </td>
                             </tr>
