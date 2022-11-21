@@ -43,9 +43,9 @@ def teachers(request):
     if request.method == 'POST' and request.FILES:
         uploaded_file = request.FILES["document"]
         data = parse_file(uploaded_file)
-        print(data)
         # пройтись циклом по файлу
-    return render(request=request, template_name='exchange_app/teachers.html', context={'teachers_data': teachers_data, 'flag':teachers_data})
+    return render(request=request, template_name='exchange_app/teachers.html',
+                  context={'teachers_data': teachers_data, 'flag': teachers_data})
 
 
 @permission_required("exchange_app.delete_teachers")
@@ -99,10 +99,7 @@ def users(request):
         if search_query:
             find_data = search_users(str(search_query), user_data)
             user_data = find_data
-
-
     request.session['user_data'] = user_data
-    print(request.session['user_data'])
     return render(request=request, template_name='exchange_app/users.html', context={'user_data': user_data})
 
 
@@ -133,7 +130,8 @@ def user_edit(request, user_id):
 def admins(request):
     admins_data = get_admins()
     request.session['admins_data'] = admins_data
-    return render(request=request, template_name='exchange_app/admins.html', context={'admins_data': admins_data,'flag':admins_data})
+    return render(request=request, template_name='exchange_app/admins.html',
+                  context={'admins_data': admins_data, 'flag': admins_data})
 
 
 @permission_required('auth.change_permission')
@@ -182,13 +180,13 @@ def create_admin(request):
 @login_required()
 def timetables(request):
     ids = get_groups()
+    shedule = get_shedule(ids[0])
+    search_query = ids[0]
     if request.method == 'POST':
         search_query = request.POST.get('search')
         shedule = get_shedule(search_query)
-        request.session["search"] = search_query
-        return render(request=request, template_name='exchange_app/timetable.html',
-                      context={'shedule': shedule, 'number': ids})
-    return render(request=request, template_name='exchange_app/timetable.html', context={'number': ids})
+    return render(request=request, template_name='exchange_app/timetable.html',
+                  context={'number': ids, 'shedule': shedule, 'search_query': search_query})
 
 
 @permission_required('exchange_app.view_post')
@@ -204,10 +202,16 @@ def update_timetable(request):
 
 @permission_required('exchange_app.view_post')
 @login_required()
-def table_request_errors(request):
-    errors = get_error_requests()
-    request.session['errors'] = errors
-    return render(request=request, template_name='exchange_app/table_request.html', context={'errors': errors})
+def table_requests(request):
+    query_list = ['Подтверждение', 'Фидбек']
+    if request.session.get('search_query') is None:
+        request.session['search_query'] = query_list[0]
+    if request.method == 'POST':
+        search_query = request.POST.get('search')
+        request.session['search_query'] = search_query
+    data = get_data_from_req(request.session['search_query'])
+    return render(request=request, template_name='exchange_app/table_request.html',
+                  context={'search_value': request.session.get('search_query'), 'data': data, 'query_list': query_list})
 
 
 @permission_required('exchange_app.change_post')
@@ -215,17 +219,10 @@ def table_request_errors(request):
 def remove_error_request(request, error_id: int):
     flag = del_error_request(error_id)
     if flag != -1:
-        messages.info(request, 'Удаление запрос прошло успешно')
+        messages.info(request, 'Удаление запроса прошло успешно')
     else:
         messages.info(request, 'Удалить запрос не удалось')
-    return redirect('/errors/')
-
-
-@permission_required('exchange_app.view_post')
-@login_required()
-def table_request_confirms(request):
-    confirms = get_conf_requests()
-    return render(request=request, template_name='exchange_app/table_request.html', context={'confirms': confirms})
+    return redirect('/table_requests/', context={'flag': flag, 'search_query': request.session['search_query']})
 
 
 @permission_required('exchange_app.change_post')
@@ -236,7 +233,7 @@ def confirm_request(request, confirm_id):
         messages.info(request, 'Подтверждение прошло успешно')
     else:
         messages.info(request, 'Подтверждение не удалось')
-    return redirect('/confirms/', context={'flag': flag})
+    return redirect('/table_requests/', context={'flag': flag, 'search_query': request.session['search_query']})
 
 
 @permission_required('exchange_app.change_post')
@@ -247,7 +244,7 @@ def delete_confirm_request(request, confirm_id):
         messages.info(request, 'Удаление прошло успешно')
     else:
         messages.info(request, 'Удаление не удалось')
-    return redirect('/confirms/', context={'flag': flag})
+    return redirect('/table_requests/', context={'flag': flag, 'search_query': request.session['search_query']})
 
 
 @permission_required('exchange_app.change_post')

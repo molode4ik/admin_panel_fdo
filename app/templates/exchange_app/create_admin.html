@@ -11,7 +11,11 @@
     <input value="Имя" name="admin_name"  title="только буквы">
     <input value="Логин" name="admin_login"  title="только буквы">
     <input value="Пароль" name="admin_password"  title="только буквы">
-    <input value="Тип" name="admin_privilege"  title="только буквы">
+    <select class="form-select form-select-lg mb-3" name="admin_privilege" aria-label=".form-select-lg example">
+            <option> admin</option>
+            <option> moderator</option>
+            <option> viewer</option>
+        </select>
     <button class="" type="submit"> Создать </button>
     </form>
 

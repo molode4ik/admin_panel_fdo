@@ -17,71 +17,74 @@
                 crossorigin="anonymous"></script>
     </head>
     <body>
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-    <a href="/confirms">Подтверждение</a>
-    <a href="/errors{{ user.student_id }}">Фидбек</a>
-    <div class="panel-body table-responsive">
-        {% if errors %}
-            <table class="table">
-                <thead>
-                Фидбек
-                <tr>
-                    <th scope="col">id</th>
-                    <th scope="col">id студента</th>
-                    <th scope="col">Тема сообщения</th>
-                    <th scope="col">Сообщение</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <form action="" method="POST">
-                        {% csrf_token %}
-                            {% for error in errors %}
-                                <tr>
-                                    <td>{{ error.error_id }}</td>
-                                    <td>{{ error.error_student_id }}</td>
-                                    <td>{{ error.error_theme }}</td>
-                                    <td>{{ error.error_message }}</td>
-                                    <td><a href="delete_error/{{ error.error_id  }}">Удалить</a></td>
-                                </tr>
-                            {% endfor %}
-                        </form>
-                </tbody>
-            </table>
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <select class="form-select form-select-lg mb-3" name='search' aria-label=".form-select-lg example"
+                onchange="this.form.submit()">
+            {% for query in query_list %}
+                <option {% if query == search_value %} selected {% endif %}> {{ query }}</option>
+            {% endfor %}
+        </select>
+        <div class="panel-body table-responsive">
+        {% if data %}
+            {% if search_value == 'Фидбек' %}
+                    <table class="table">
+                        <thead>
+                        {{ search_query }}
+                        <tr>
+                            <th scope="col">id</th>
+                            <th scope="col">id студента</th>
+                            <th scope="col">Тема сообщения</th>
+                            <th scope="col">Сообщение</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for error in data %}
+                            <tr>
+                                <td>{{ error.error_id }}</td>
+                                <td>{{ error.error_student_id }}</td>
+                                <td>{{ error.error_theme }}</td>
+                                <td>{{ error.error_message }}</td>
+                                <td><a href="delete_error/{{ error.error_id }}">Удалить</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+            {% endif %}
+            {% if search_value == 'Подтверждение' %}
+                    <table class="table">
+                        <thead>
+                        {{ search_value }}
+                        <tr>
+                            <th scope="col">id</th>
+                            <th scope="col">id студента</th>
+                            <th scope="col">ФИО</th>
+                            <th scope="col">Файл</th>
+                            <th scope="col">Номер зачетки</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for confirm in data %}
+                            <tr>
+                                <td>{{ confirm.confirmation_id }}</td>
+                                <td>{{ confirm.confirmation_student_id }}</td>
+                                <td>{{ confirm.confirmation_lastname }} {{ confirm.confirmation_firstname }} {{ confirm.confirmation_middlename }}</td>
+                                <td>{{ confirm.confirmation_file_path }}</td>
+                                <td>{{ confirm.confirmation_record_number }}</td>
+                                <td><a href="confirm_request/{{ confirm.confirmation_id }}">Подтвердить</a></td>
+                                <td><a href="delete_confirm_request/{{ confirm.confirmation_id }}">Удалить</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+            {% endif %}
         {% endif %}
-        {% if confirms %}
-            <table class="table">
-                <thead>
-                Подтверждения
-                <tr>
-                    <th scope="col">id</th>
-                    <th scope="col">id студента</th>
-                    <th scope="col">ФИО</th>
-                    <th scope="col">Файл</th>
-                    <th scope="col">Номер зачетки</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <form action="" method="POST">
-                        {% csrf_token %}
-                            {% for confirm in confirms %}
-                                <tr>
-                                    <td>{{ confirm.confirmation_id }}</td>
-                                    <td>{{ confirm.confirmation_student_id }}</td>
-                                    <td>{{ confirm.confirmation_lastname }} {{ confirm.confirmation_firstname }} {{ confirm.confirmation_middlename }}</td>
-                                    <td>{{ confirm.confirmation_file_path }}</td>
-                                    <td>{{ confirm.confirmation_record_number }}</td>
-                                    <td><a href="confirm_request/{{ confirm.confirmation_id }}">Подтвердить</a></td>
-                                    <td><a href="delete_confirm_request/{{ confirm.confirmation_id }}">Удалить</a></td>
-                                </tr>
-                            {% endfor %}
-                    </form>
-                </tbody>
-            </table>
-        {% endif %}
-    </div>
+        </div>
+    </form>
     </body>
 {% endblock %}

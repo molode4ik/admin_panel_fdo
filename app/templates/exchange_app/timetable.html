@@ -19,12 +19,11 @@
 <div>
     <form action="{% url 'timetables' %}" method="POST">
         {% csrf_token %}
-    <select class="form-select form-select-lg mb-3" name = 'search' aria-label=".form-select-lg example">
+    <select class="form-select form-select-lg mb-3" name = 'search' aria-label=".form-select-lg example" onchange="this.form.submit()">
           {% for i in number %}
-            <option > {{ i }} </option>
+            <option {% if i == search_query %} selected {% endif %}> {{ i }} </option>
           {% endfor %}
     </select>
-    <input  type="submit" value="Подтвердить">
         <a href="/update_timetable">Обновить расписание</a>
     </form>
 </div>

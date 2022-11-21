@@ -3,7 +3,7 @@ import os
 import hashlib
 from django.contrib.auth.models import User, Group
 from django.core.files.storage import FileSystemStorage
-from .api_requests import admin_auth
+from .api_requests import admin_auth, get_error_requests, get_conf_requests
 
 
 def check_auth(username: str, password: str) -> [bool, int]:
@@ -86,3 +86,10 @@ def parse_file(uploaded_file):
                     pass
             os.remove("media/" + filename)
             return data
+
+
+def get_data_from_req(reuqest_type: str):
+    if reuqest_type.lower() == 'подтверждение':
+        return get_conf_requests()
+    else:
+        return get_error_requests()
