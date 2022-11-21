@@ -6,29 +6,32 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="frame">
-        <div ng-app ng-init="checked = false">
-            <form class="form-signin" action="" method="post" name="form">
-              <label for="fullname">Фамилия</label>
-                <input class="form-styling" type="text" name="username" placeholder="" value="{{ user_FIO.0 }}" />
-              <label for="fullname">Имя</label>
-                <input class="form-styling" type="text" name="username" placeholder="" value="{{ user_FIO.1 }}" />
-              <label for="fullname">Отчество</label>
-                <input class="form-styling" type="text" name="username" placeholder="" value="{{ user_FIO.2 }}" />
-              <label for="dlno">Номер зачетной книжки</label>
-                <input class="form-styling" type="text" name="username" placeholder="" value="{{ user.record_number }}" />
-              <label for="password">Логин</label>
-                <input class="form-styling" type="text" name="password" placeholder="" value="{{ user.student_login }}" />
-                <div class="btn-animate">
-                    <form action="{% url 'users' %}" method="POST">
-                        {% csrf_token %}
-                        <button class="btn btn-default" title="Delete"><i class="fa fa-sync-alt"></i>Сохранить</button>
-                    </form>
-                </div>
-                <div class="btn-animate"> <a href="{% url 'users' %}" class="btn-signin">Назад</a> </div>
-            </form>
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="container">
+        <div class="frame">
+            <div ng-app ng-init="checked = false">
+                <label for="fullname">Фамилия</label>
+                    <input class="form-styling" type="text" name="lastname" placeholder="" value="{{ user.student_lastname }}" />
+                <label for="fullname">Имя</label>
+                    <input class="form-styling" type="text" name="firstname" placeholder="" value="{{ user.student_firstname }}" />
+                <label for="fullname">Отчество</label>
+                    <input class="form-styling" type="text" name="middlename" placeholder="" value="{{ user.student_middlename }}" />
+                <label for="dlno">Номер зачетной книжки</label>
+                    <input class="form-styling" type="text" name="recordnumber" placeholder="" value="{{ user.student_record_number }}" />
+                 <label for="password">email</label>
+                     <input class="form-styling" type="text" name="email" placeholder="" value="{{ user.student_email }}" />
+                <label for="password">Группа</label>
+                     <input class="form-styling" type="text" name="group" placeholder="" value="{{ user.group }}" />
+                <label for="password">eos login</label>
+                     <input class="form-styling" type="text" name="eos_login" placeholder="" value="{{ user.student_eos_login }}" />
+                <label for="password">eos password</label>
+                     <input class="form-styling" type="text" name="eos_password" placeholder="" value="{{ user.student_eos_password }}" />
             </div>
         </div>
-</div>
+            <button class="" type="submit"> Изменить </button>
+            <div class="btn-animate"> <a href="{% url 'users' %}" class="btn-signin">Назад</a> </div>
+    </div>
+
+</form>
 {% endblock %}

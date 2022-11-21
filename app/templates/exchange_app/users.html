@@ -47,14 +47,11 @@
                             <tr>
                                 <td>{{ user.student_id }}</td>
                                 <td>{{ user.student_lastname}} {{user.student_firstname}} {{user.student_middlename}}</td>
-                                <td>{{ user.record_number }}</td>
-                                <td>{{ user.student_login }}</td>
+                                <td>{{ user.student_record_number }}</td>
+                                <td>{{ user.student_email }}</td>
                                 {% if perms.exchange_app.change_users %}
                                 <td>
-                                    <form action="{% url 'user_edit' user.student_id %}" method="POST">
-                                        {% csrf_token %}
-                                        <button class="btn btn-default" title="Edit"><i class="fa fa-sync-alt"></i>Редактировать</button>
-                                    </form>
+                                    <a href="/users/edit/{{ user.student_id }}">Подробнее</a>
                                 </td>
                                 <td>
                                     <form action="{% url 'users' %}" method="POST">

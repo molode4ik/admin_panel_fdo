@@ -43,7 +43,7 @@ def teachers(request):
         uploaded_file = request.FILES["document"]
         data = parse_file(uploaded_file)
         print(data)
-        #пройтись циклом по файлу
+        # пройтись циклом по файлу
     return render(request=request, template_name='exchange_app/teachers.html', context={'teachers_data': teachers_data})
 
 
@@ -70,10 +70,10 @@ def change_teacher(request, teacher_id):
         send_data = {
             'teacher_id': teacher.get('teacher_id'),
             'name': request.POST.get('teacher_name'),
-            'teacher_phone': request.POST.get('teacher_phone'),
-            'teacher_email': request.POST.get('teacher_email'),
+            'phone': request.POST.get('teacher_phone'),
+            'email': request.POST.get('teacher_email'),
         }
-        #update_admin(send_data)
+        update_teacher(send_data)
         return redirect('/teachers')
     return render(request=request, template_name='exchange_app/teacher.html', context=teacher)
 
@@ -81,7 +81,7 @@ def change_teacher(request, teacher_id):
 @permission_required("exchange_app.delete_teachers")
 @login_required()
 def del_teacher(request, teacher_id):
-    #delete_admin_id(admin_id)
+    delete_teacher(teacher_id)
     return redirect('/teachers')
 
 
@@ -96,6 +96,7 @@ def users(request):
             user_data = find_data
 
     request.session['user_data'] = user_data
+    print(request.session['user_data'])
     return render(request=request, template_name='exchange_app/users.html', context={'user_data': user_data})
 
 
@@ -104,8 +105,21 @@ def users(request):
 def user_edit(request, user_id):
     user_list = request.session['user_data']
     user = search_user(user_list, user_id)
-    user_FIO = [user_list[0]["student_lastname"], user_list[0]["student_firstname"], user_list[0]["student_middlename"]]
-    return render(request=request, template_name='exchange_app/user_edit.html', context={'user': user, 'user_FIO': user_FIO})
+    if request.method == 'POST':
+        send_data = {
+            'student_id': user_id,
+            'group': request.POST.get('group'),
+            'firstname': request.POST.get('firstname'),
+            'lastname': request.POST.get('lastname'),
+            'middlename': request.POST.get('middlename'),
+            'email': request.POST.get('email'),
+            'record_number': request.POST.get('recordnumber'),
+            'eos_password': request.POST.get('email'),
+            'eos_login': request.POST.get('recordnumber'),
+        }
+        update_student(send_data)
+        return redirect('/users')
+    return render(request=request, template_name='exchange_app/user_edit.html', context={'user': user})
 
 
 @permission_required('auth.view_permission')
@@ -162,7 +176,8 @@ def timetables(request):
         search_query = request.POST.get('search')
         shedule = get_shedule(search_query)
         request.session["search"] = search_query
-        return render(request=request, template_name='exchange_app/timetable.html', context={'shedule': shedule, 'number': ids})
+        return render(request=request, template_name='exchange_app/timetable.html',
+                      context={'shedule': shedule, 'number': ids})
     return render(request=request, template_name='exchange_app/timetable.html', context={'number': ids})
 
 
@@ -173,43 +188,52 @@ def update_timetable(request):
     return redirect('/timetable')
 
 
+@permission_required('exchange_app.view_post')
+@login_required()
 def table_request(request):
-    table = [
-        {
-            "id": "88",
-            "FIO": "Хорошун Данил Алексеевич",
-            "numbers": "89876561278",
-            "record_book": "432123",
-            "view_requests": "Смена пароля"
-
-        },
-        {
-            "id": "89",
-            "FIO": "Соколов Денис Александрович",
-            "numbers": "897686544319",
-            "record_book": "980543",
-            "view_requests": "подтверждение зачетки"
-        },
-        {
-            "id": "90",
-            "FIO": "Ряпалов Дмитрий Николаевич",
-            "numbers": "89172191267",
-            "record_book": "970676",
-            "view_requests": "Chill"
-        }
-        ]
-
-    if request.method == 'POST':
-        data = request.POST['data']
-        data_id = re.findall('(\d+)', data)
-        data_users = [i for i in table if i['id'] == data_id[0]]
-
-        return render(request=request, template_name='exchange_app/edit_requests.html', context={ 'data_users': data_users})
-    return render(request=request, template_name='exchange_app/table_request.html', context={'table': table})
+    conf_request = get_conf_requests()
+    # if request.method == 'POST':
+    #     data = request.POST['data']
+    #     data_id = re.findall('(\d+)', data)
+    #     data_users = [i for i in erors if i['id'] == data_id[0]]
+    #     return render(request=request, template_name='exchange_app/edit_requests.html',
+    #                   context={'data_users': data_users})
+    return render(request=request, template_name='exchange_app/table_request.html', context={'confirms': conf_request})
 
 
+@permission_required('exchange_app.view_post')
+@login_required()
+def table_request_errors(request):
+    errors = get_error_requests()
+    request.session['errors'] = errors
+    return render(request=request, template_name='exchange_app/table_request.html', context={'errors': errors})
+
+
+@permission_required('exchange_app.change_post')
+@login_required()
+def remove_error_request(request, error_id: int):
+    del_error_request(error_id)
+    return redirect('/errors/')
+
+
+@permission_required('exchange_app.view_post')
+@login_required()
+def table_request_confirms(request):
+    confirms = get_conf_requests()
+    return render(request=request, template_name='exchange_app/table_request.html', context={'confirms': confirms})
+
+
+@permission_required('exchange_app.change_post')
+@login_required()
+def remove_confirm_request(request, confirm_id):
+    print('aye')
+    # del_confirm_request(confirm_id)
+    return redirect('/confirms/')
+
+
+@permission_required('exchange_app.change_post')
+@login_required()
 def edit_requests(request):
-
     return render(request=request, template_name='exchange_app/edit_requests.html')
 
 
@@ -217,7 +241,6 @@ def edit_requests(request):
 @login_required()
 def debts(request):
     debts = get_all_academic_debts()
-
     if request.method == 'POST' and request.FILES:
         uploaded_file = request.FILES["document"]
         print(uploaded_file)
@@ -225,6 +248,8 @@ def debts(request):
     return render(request=request, template_name='exchange_app/debts.html', context={"debts": debts})
 
 
+@permission_required('exchange_app.change_post')
+@login_required()
 def debts_see_more(request, academic_id):
     debts_list = request.session['debts']
     debt = search_debt(debts_list, academic_id)
@@ -232,4 +257,5 @@ def debts_see_more(request, academic_id):
 
     user = search_user(users, debt["academic_student_id"])
 
-    return render(request=request, template_name='exchange_app/debts_see_more.html', context={ "debt": debt, "user": user})
+    return render(request=request, template_name='exchange_app/debts_see_more.html',
+                  context={"debt": debt, "user": user})
