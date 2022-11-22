@@ -137,6 +137,7 @@ def admins(request):
 @permission_required('auth.change_permission')
 @login_required()
 def change_admin(request, admin_id):
+    request.session['admins_type'] = ['admin', 'moderator', 'viewer']
     admins_list = request.session['admins_data']
     admin = search_admin(admins_list, admin_id)
     if request.method == "POST":
@@ -147,18 +148,21 @@ def change_admin(request, admin_id):
         }
         update_admin(send_data)
         return redirect('/admins')
-    return render(request=request, template_name='exchange_app/admin.html', context=admin)
+    return render(request=request, template_name='exchange_app/admins.html',
+                  context={'admin': admin, 'modal': True, 'admins_data': admins_list,
+                           'admins_types': request.session['admins_type']})
 
 
 @permission_required('auth.delete_permission')
 @login_required()
 def delete_admin(request, admin_id):
-    flag = delete_admin_id(admin_id)
-    if flag != -1:
-        messages.info(request, 'Удаление Админа прошло успешно')
-    else:
-        messages.info(request, 'Удалить Админа не удалось')
-    return redirect('/admins')
+    if request.method == 'POST':
+        flag = delete_admin_id(admin_id)
+        if flag != -1:
+            messages.info(request, 'Удаление Админа прошло успешно')
+        else:
+            messages.info(request, 'Удалить Админа не удалось')
+        return redirect('/admins')
 
 
 @permission_required('auth.delete_permission')
