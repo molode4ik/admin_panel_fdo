@@ -112,15 +112,21 @@
                     <form action="" method="POST">
                         <div class="modal-body">
                             {% csrf_token %}
-                            <label for="fullname">ФИО</label>
-                            <input class="form-styling" type="text" name="teacher_name" placeholder=""
-                                   value=""/>
+                            <label for="fullname">Фамилия</label>
+                            <input class="form-styling" type="text" name="lastname" placeholder=""
+                                   value="" pattern="[А-Яа-я]{2,32}" required/>
+                            <label for="fullname">Имя</label>
+                            <input class="form-styling" type="text" name="firstname" placeholder=""
+                                   value="" pattern="[А-Яа-я]{2,32}" required/>
+                            <label for="fullname">Отчество</label>
+                            <input class="form-styling" type="text" name="middlename" placeholder=""
+                                   value="" pattern="[А-Яа-я]{2,32}" required/>
                             <label for="fullname">Телефон</label>
-                            <input class="form-styling" type="text" name="teacher_phone" placeholder=""
-                                   value=""/>
+                            <input class="form-styling" type="tel" name="teacher_phone" placeholder=""
+                                   value="" pattern="^[+7]\d{11,11}" required/>
                             <label for="fullname">email</label>
-                            <input class="form-styling" type="text" name="teacher_email" placeholder=""
-                                   value=""/>
+                            <input class="form-styling" type="email" name="teacher_email" placeholder=""
+                                   value="" pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"/>
                         </div>
                         <div class="modal-footer">
                             <a href="/teachers">

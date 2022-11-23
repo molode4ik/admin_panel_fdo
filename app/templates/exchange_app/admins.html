@@ -133,13 +133,13 @@
                             {% csrf_token %}
                             <label for="fullname">Имя</label>
                             <input class="form-styling" type="text" name="admin_name" placeholder=""
-                                   value="" title="только буквы"/>
+                                   value="" title="только буквы" pattern="[А-Яа-я]{2,32}" required/>
                             <label for="fullname">Логин</label>
                             <input class="form-styling" type="text" name="admin_login" placeholder=""
-                                   value="" title="только буквы"/>
+                                   value="" title="только буквы" pattern="[a-zA-Z][a-zA-Z0-9]{0,19}" required/>
                             <label for="password">Пароль</label>
                             <input class="form-styling" type="text" name="admin_password" placeholder=""
-                                   value="" title="только буквы"/>
+                                   value="" title="только буквы" pattern="[a-zA-Z][a-zA-Z0-9]{0,19}" required/>
                             <select class="form-select form-select-lg mb-3" name="admin_privilege"
                                     aria-label=".form-select-lg example">
                                 <option> admin</option>

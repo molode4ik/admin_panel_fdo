@@ -87,19 +87,19 @@
                             {% csrf_token %}
                             <label for="fullname">Фамилия</label>
                             <input class="form-styling" type="text" name="lastname" placeholder=""
-                                   value="{{ user.student_lastname }}"/>
+                                   value="{{ user.student_lastname }}" pattern="[А-Яа-я]{2,32}" required/>
                             <label for="fullname">Имя</label>
                             <input class="form-styling" type="text" name="firstname" placeholder=""
-                                   value="{{ user.student_firstname }}"/>
+                                   value="{{ user.student_firstname }}" pattern="[А-Яа-я]{2,32}" required/>
                             <label for="fullname">Отчество</label>
                             <input class="form-styling" type="text" name="middlename" placeholder=""
-                                   value="{{ user.student_middlename }}"/>
+                                   value="{{ user.student_middlename }}" pattern="[А-Яа-я]{2,32}" required/>
                             <label for="dlno">Номер зачетной книжки</label>
-                            <input class="form-styling" type="text" name="recordnumber" placeholder=""
+                            <input class="form-styling" type="number" name="recordnumber" placeholder=""
                                    value="{{ user.student_record_number }}"/>
                             <label for="password">email</label>
-                            <input class="form-styling" type="text" name="email" placeholder=""
-                                   value="{{ user.student_email }}"/>
+                            <input class="form-styling" type="email" name="email" placeholder=""
+                                   value="{{ user.student_email }}" pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"/>
                             <select class="form-select form-select-lg mb-3" name="group"
                                     aria-label=".form-select-lg example">
                                 {% for group in groups %}
@@ -109,10 +109,10 @@
                             </select>
                             <label for="password">eos login</label>
                             <input class="form-styling" type="text" name="eos_login" placeholder=""
-                                   value="{{ user.student_eos_login }}"/>
+                                   value="{{ user.student_eos_login }}" pattern="[a-zA-Z][a-zA-Z0-9]{0,19}"/>
                             <label for="password">eos password</label>
                             <input class="form-styling" type="text" name="eos_password" placeholder=""
-                                   value="{{ user.student_eos_password }}"/>
+                                   value="{{ user.student_eos_password }}" pattern="[a-zA-Z][a-zA-Z0-9]{0,19}"/>
                         </div>
                         <div class="modal-footer">
                             <a href="/users">

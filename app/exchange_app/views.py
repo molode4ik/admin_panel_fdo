@@ -57,8 +57,8 @@ def add_teacher(request):
     if request.method == 'POST':
         send_data = {
             'name': f"{request.POST.get('lastname')} {request.POST.get('firstname')} {request.POST.get('middlename')}",
-            'email': request.POST.get('email'),
-            'phone': request.POST.get('phone')
+            'email': request.POST.get('teacher_email'),
+            'phone': request.POST.get('teacher_phone')
         }
         create_teacher(send_data)
         return redirect('/teachers')
@@ -128,8 +128,8 @@ def user_edit(request, user_id):
             'middlename': request.POST.get('middlename'),
             'email': request.POST.get('email'),
             'record_number': request.POST.get('recordnumber'),
-            'eos_password': request.POST.get('email'),
-            'eos_login': request.POST.get('recordnumber'),
+            'eos_password': request.POST.get('eos_password'),
+            'eos_login': request.POST.get('eos_login'),
         }
         update_student(send_data)
         return redirect('/users')
@@ -196,7 +196,6 @@ def create_admin(request):
             'password': hash_password(request.POST.get('admin_password')),
             'privilege': request.POST.get('admin_privilege'),
         }
-        add_admin(send_data)
         return redirect('/admins')
     return render(request=request, template_name='exchange_app/admins.html',
                   context={'modal_add': True, 'admins_data': admins_list,
