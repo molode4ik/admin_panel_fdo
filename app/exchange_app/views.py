@@ -22,7 +22,6 @@ def auth(request):
                 request.session['permission'] = permission
                 user = authenticate(username=username, password=password)
                 login(request, user)
-                print(user.get_all_permissions(),user.get_group_permissions() )
                 request.session['user_password'] = password
                 return redirect("index/")
     return render(request=request, template_name='exchange_app/login.html')
@@ -145,7 +144,8 @@ def admins(request):
     request.session['admins_data'] = admins_data
     request.session['admins_type'] = ['admin', 'moderator', 'viewer']
     return render(request=request, template_name='exchange_app/admins.html',
-                  context={'admins_data': admins_data, 'flag': admins_data})
+                  context={'admins_data': admins_data, 'flag': admins_data,
+                           'current_admin': request.user.username})
 
 
 @permission_required('auth.change_permission')
@@ -167,7 +167,8 @@ def change_admin(request, admin_id):
         return redirect('/admins')
     return render(request=request, template_name='exchange_app/admins.html',
                   context={'admin': admin, 'modal': modal, 'admins_data': admins_list,
-                           'admins_types': request.session['admins_type']})
+                           'admins_types': request.session['admins_type'],
+                           'current_admin': request.user.username})
 
 
 @permission_required('auth.delete_permission')
@@ -201,7 +202,8 @@ def create_admin(request):
         return redirect('/admins')
     return render(request=request, template_name='exchange_app/admins.html',
                   context={'modal_add': True, 'admins_data': admins_list,
-                           'admins_types': request.session['admins_type']})
+                           'admins_types': request.session['admins_type'],
+                           'current_admin': request.user.username})
 
 
 @permission_required('exchange_app.view_post')

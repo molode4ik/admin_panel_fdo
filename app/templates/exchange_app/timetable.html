@@ -2,11 +2,13 @@
 {% load static %}
 {% block content %}
 <head>
-    <title>List of persons</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
-<!-- CSS only -->
+<title>List of persons</title>
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/table_student.css' %}"/>
+{% endblock %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </head>
 
@@ -16,18 +18,22 @@
     <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
     {% endfor %}
 </ul>
-<div>
+<div class = "mama">
     <form action="{% url 'timetables' %}" method="POST">
         {% csrf_token %}
-    <select class="form-select form-select-lg mb-3" name = 'search' aria-label=".form-select-lg example" onchange="this.form.submit()">
-          {% for i in number %}
-            <option {% if i == search_query %} selected {% endif %}> {{ i }} </option>
-          {% endfor %}
-    </select>
-        <a href="/update_timetable">Обновить расписание</a>
+        <div style="width: 20%;">
+        <select class="form-select form-select-lg mb-3" name = 'search' aria-label=".form-select-lg example" onchange="this.form.submit()">
+              {% for i in number %}
+                <option {% if i == search_query %} selected {% endif %}> {{ i }} </option>
+              {% endfor %}
+        </select>
+        </div>
+        <a href="/update_timetable"><button type = 'button' class="btn btn-primary" title="Reload"><i class="fa fa-sync-alt"></i>Обновить расписание
+                                        </button></a>
     </form>
 </div>
-<div class="panel-body table-responsive">
+
+<div class="mama">
      <table class="table">
         <thead>
             <tr>

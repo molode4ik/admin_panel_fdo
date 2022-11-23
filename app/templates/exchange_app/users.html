@@ -2,45 +2,52 @@
 
 {% load static %}
 {% block head %}
-    <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
+          <link rel="stylesheet" href="{% static 'css/table_student.css' %}"/>
+          <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
 {% endblock %}
 
 {% block content %}
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-offset-1 col-md-10">
-                <div class="panel">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+     <div class = "mama">
+               <h4 class="title">Список <span>студентов</span></h4>
+     </div>
+          <div class="mama">
                     <div class="panel-heading">
                         <div class="row">
-                            <div class="col col-sm-3 col-xs-12">
-                                <h4 class="title">Data <span>List</span></h4>
-                            </div>
-                            <div class="col-sm-9 col-xs-12 text-right">
-                                <div class="btn_group">
+
+                            <div class="col-sm-3 col-xs-12">
+
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+
                                     <form action="{% url 'users' %}" method="POST">
                                         {% csrf_token %}
-                                        <input type="text" class="form-control" placeholder="Search" name="search">
+                                        <input type="text" class="form-control" placeholder="Поиск" name="search">
+
                                     </form>
-                                    <form action="{% url 'users' %}" method="POST">
-                                        {% csrf_token %}
-                                        <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i>Сбросить
-                                        </button>
-                                    </form>
+                                    <div class = "mama1">
+                                        <a href="/users" class="btn btn-primary" title="Reload">Сбросить</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="panel-body table-responsive">
+          </div>
+    <div class = "mama">
+        <div class="row">
+
+
+
+                    <div class="panel-body table-responsive" >
                         <table class="table">
                             <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Ф.И.О.</th>
                                 <th>Номер зачетной книжки</th>
-                                <th>Логин</th>
+                                <th>Почта</th>
                                 <th></th>
-                                <th></th>
+
                             </tr>
                             </thead>
                             <tbody>
@@ -51,7 +58,9 @@
                                     <td>{{ user.student_record_number }}</td>
                                     <td>{{ user.student_email }}</td>
                                     {% if perms.exchange_app.change_users %}
-                                        <td><a href="/users/{{ user.student_id }}">Подробнее</a></td>
+                                        <td>
+                                            <a href="/users/{{ user.student_id }}"><button type = 'button' value='/users/{{ user.student_id }}'  class="btn btn-primary" title="Reload"><i class="fa fa-sync-alt"></i>Подробнее
+                                        </button></a></td>
                                         {% if modal %}
                                             <script>document.querySelector("#exampleModal").addEventListener() </script>
                                         {% endif %}
@@ -69,9 +78,9 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    {% if user and modal %}
+
+
+     {% if user and modal %}
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -100,7 +109,7 @@
                             <label for="password">email</label>
                             <input class="form-styling" type="email" name="email" placeholder=""
                                    value="{{ user.student_email }}" pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"/>
-                            <select class="form-select form-select-lg mb-3" name="group"
+                            <select class="form-styling" name="group"
                                     aria-label=".form-select-lg example">
                                 {% for group in groups %}
                                         <option {% if user.student_group == group %}
@@ -126,3 +135,6 @@
         </div>
     {% endif %}
 {% endblock %}
+
+
+

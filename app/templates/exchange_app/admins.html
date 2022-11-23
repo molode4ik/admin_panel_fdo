@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block head %}
-    <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/table_student.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
 {% endblock %}
 
 {% block content %}
@@ -12,21 +13,24 @@
             {% endfor %}
         </ul>
     {% endif %}
-    <div class="container">
-        {% if perms.auth.delete_permission %}
-            <a href="/admins/create_admin/">Создать админа</a>
-            {% if modal_add %}
-                <script>document.querySelector("#addModal").addEventListener() </script>
-            {% endif %}
-        {% endif %}
-        <div class="row">
+
+        <div class="mama1">
             <div class="col-md-offset-1 col-md-10">
                 <div class="panel">
                     <div class="panel-heading">
                         <div class="row">
-                            <div class="col col-sm-3 col-xs-12">
-                                <h4 class="title">Data <span>List</span></h4>
+                            <div class = "mama2">
+                                <h4 class="title">Список <span>админов</span></h4>
                             </div>
+                              <div class = "mama2">
+        {% if perms.auth.delete_permission %}
+            <a href="/admins/create_admin/"><button type = 'button' value='/users/{{ user.student_id }}'  class="btn btn-primary" title="Reload"><i class="fa fa-sync-alt"></i>Создать админа
+                                        </button></a>
+            {% if modal_add %}
+                <script>document.querySelector("#addModal").addEventListener() </script>
+            {% endif %}
+        {% endif %}
+        </div>
                             {#                            <div class="col-sm-9 col-xs-12 text-right">#}
                             {#                                <div class="btn_group">#}
                             {#                                    <form action="{% url 'admins' %}" method="POST">#}
@@ -60,21 +64,24 @@
                             <tbody>
                             {% for admin in admins_data %}
                                 <tr>
+                                    {% if current_admin != admin.admin_login %}
                                     <td> {{ admin.admin_id }}
                                     <td>{{ admin.admin_name }}</td>
                                     <td>{{ admin.admin_login }}</td>
                                     <td>{{ admin.admin_privilege }}</td>
                                     {% if perms.auth.delete_permission %}
-                                        <td><a href="/admins/{{ admin.admin_id }}">Подробнее</a></td>
+                                        <td><a href="/admins/{{ admin.admin_id }}"><button type = 'button' value='/users/{{ user.student_id }}'  class="btn btn-primary" title="Reload"><i class="fa fa-sync-alt"></i>Подробнее
+                                        </button></a></td>
                                         <form action="/admins/delete_admin/{{ admin.admin_id }}" method="POST">
                                             {% csrf_token %}
                                             <td>
-                                                <button type="submit">Удалить</button>
+                                                <button class="btn btn-primary" type="submit">Удалить</button>
                                             </td>
                                         </form>
                                         {% if modal %}
                                             <script>document.querySelector("#exampleModal").addEventListener() </script>
                                         {% endif %}
+                                    {% endif %}
                                     {% endif %}
                                 </tr>
                             {% endfor %}
@@ -99,9 +106,11 @@
                     <form action="" method="POST">
                         <div class="modal-body">
                             {% csrf_token %}
-                            <input value="{{ admin.admin_name }}" name="admin_name" pattern="^[A-Za-z0-9]+$"
+                            <label>Имя</label>
+                            <input class="form-styling" value="{{ admin.admin_name }}" name="admin_name" pattern="^[A-Za-z0-9]+$"
                                    title="только буквы">
-                            <select class="form-select form-select-lg mb-3" name="admin_privilege"
+                            <label>Привилегия</label>
+                            <select class="form-styling" name="admin_privilege"
                                     aria-label=".form-select-lg example">
                                 {% for type in admins_types %}
                                     <option {% if admin.admin_privilege == type %}
@@ -138,11 +147,11 @@
                                    value="" title="только буквы" pattern="[А-Яа-я]{2,32}" required/>
                             <label for="fullname">Логин</label>
                             <input class="form-styling" type="text" name="admin_login" placeholder=""
-                                   value="" title="только буквы" pattern="[a-zA-Z][a-zA-Z0-9]{0,19}" required/>
+                                   value="" title="только буквы" pattern="[a-zA-Z0-9][a-zA-Z0-9]{0,19}" required/>
                             <label for="password">Пароль</label>
                             <input class="form-styling" type="text" name="admin_password" placeholder=""
-                                   value="" title="только буквы" pattern="[a-zA-Z][a-zA-Z0-9]{0,19}" required/>
-                            <select class="form-select form-select-lg mb-3" name="admin_privilege"
+                                   value="" title="только буквы" pattern="[a-zA-Z0-9][a-zA-Z0-9]{0,19}" required/>
+                            <select class="form-styling" name="admin_privilege"
                                     aria-label=".form-select-lg example">
                                 <option> admin</option>
                                 <option> moderator</option>
@@ -158,7 +167,7 @@
                     </form>
                 </div>
             </div>
-        </div>
+
     {% endif %}
 
 {% endblock %}

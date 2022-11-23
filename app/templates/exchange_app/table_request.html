@@ -2,6 +2,10 @@
 {% load static %}
 {% block content %}
     <head>
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/table_student.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+{% endblock %}
         <title>Таблица запросов</title>
     </head>
     <body>
@@ -12,13 +16,15 @@
     </ul>
     <form action="" method="POST">
         {% csrf_token %}
-        <select class="form-select form-select-lg mb-3" name='search' aria-label=".form-select-lg example"
-                onchange="this.form.submit()">
-            {% for query in query_list %}
-                <option {% if query == search_value %} selected {% endif %}> {{ query }}</option>
-            {% endfor %}
-        </select>
-        <div class="panel-body table-responsive">
+        <div style="margin-left:2%; width: 20%;">
+            <select class="form-select form-select-lg mb-3" name='search' aria-label=".form-select-lg example"
+                    onchange="this.form.submit()">
+                {% for query in query_list %}
+                    <option {% if query == search_value %} selected {% endif %}> {{ query }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mama">
         {% if data %}
             {% if search_value == 'Фидбек' %}
                     <table class="table">
@@ -29,6 +35,7 @@
                             <th scope="col">id студента</th>
                             <th scope="col">Тема сообщения</th>
                             <th scope="col">Сообщение</th>
+                            <th scope="col">Выбор действия</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -38,7 +45,8 @@
                                 <td>{{ error.error_student_id }}</td>
                                 <td>{{ error.error_theme }}</td>
                                 <td>{{ error.error_message }}</td>
-                                <td><a href="delete_error/{{ error.error_id }}">Удалить</a></td>
+                                <td><a href="delete_error/{{ error.error_id }}"><button type = 'button' class="btn btn-primary" title="Reload"><i class="fa fa-sync-alt"></i>удалить
+                                        </button></a></td>
                             </tr>
                         {% endfor %}
                         </tbody>
