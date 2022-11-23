@@ -51,6 +51,10 @@
                                 <th>Имя</th>
                                 <th>Логин</th>
                                 <th>Привилегия</th>
+                                {% if perms.auth.delete_permission %}
+                                    <th>Подробнее</th>
+                                    <th>Удалить</th>
+                                {% endif %}
                             </tr>
                             </thead>
                             <tbody>
@@ -60,16 +64,14 @@
                                     <td>{{ admin.admin_name }}</td>
                                     <td>{{ admin.admin_login }}</td>
                                     <td>{{ admin.admin_privilege }}</td>
-                                    {% if perms.auth.change_permission %}
-                                        {% if perms.auth.delete_permisson %}
-                                            <form action="/admins/delete_admin/{{ admin.admin_id }}" method="POST">
-                                                {% csrf_token %}
-                                                <td>
-                                                    <button type="submit">Удалить</button>
-                                                </td>
-                                            </form>
-                                        {% endif %}
+                                    {% if perms.auth.delete_permission %}
                                         <td><a href="/admins/{{ admin.admin_id }}">Подробнее</a></td>
+                                        <form action="/admins/delete_admin/{{ admin.admin_id }}" method="POST">
+                                            {% csrf_token %}
+                                            <td>
+                                                <button type="submit">Удалить</button>
+                                            </td>
+                                        </form>
                                         {% if modal %}
                                             <script>document.querySelector("#exampleModal").addEventListener() </script>
                                         {% endif %}

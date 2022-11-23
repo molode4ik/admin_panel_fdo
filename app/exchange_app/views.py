@@ -22,6 +22,7 @@ def auth(request):
                 request.session['permission'] = permission
                 user = authenticate(username=username, password=password)
                 login(request, user)
+                print(user.get_all_permissions(),user.get_group_permissions() )
                 request.session['user_password'] = password
                 return redirect("index/")
     return render(request=request, template_name='exchange_app/login.html')

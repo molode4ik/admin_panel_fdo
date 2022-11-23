@@ -65,8 +65,6 @@ def search_admin(admins: list, admin_id: int) -> dict:
 
 def search_debt(debts: list, debt_id: int, debt_type: str) -> list:
     search_val = 'money_id'
-    print(debt_type)
-    print(debt_id)
     if debt_type == 'Академические':
         search_val = 'academic_id'
     for debt in debts:
