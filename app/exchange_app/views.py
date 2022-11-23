@@ -196,6 +196,7 @@ def create_admin(request):
             'password': hash_password(request.POST.get('admin_password')),
             'privilege': request.POST.get('admin_privilege'),
         }
+        add_admin(send_data)
         return redirect('/admins')
     return render(request=request, template_name='exchange_app/admins.html',
                   context={'modal_add': True, 'admins_data': admins_list,
@@ -282,42 +283,73 @@ def edit_requests(request):
 @permission_required('exchange_app.change_post')
 @login_required()
 def debts(request):
-    all_debts = get_all_academic_debts()
-    if request.method == 'POST' and request.FILES:
-        uploaded_file = request.FILES["document"]
-        print(uploaded_file)
-    request.session['debts'] = all_debts
-    return render(request=request, template_name='exchange_app/debts.html', context={"debts": all_debts})
+    query_list = ['Академические', 'Денежные']
+    request.session['debs_list'] = query_list
+    if request.session.get('search_deb_query') is None:
+        request.session['search_deb_query'] = query_list[0]
+    if request.method == 'POST':
+        search_query = request.POST.get('search')
+        request.session['search_deb_query'] = search_query
+    all_debts = get_debts_data(request.session['search_deb_query'])
+    data = create_common_debts(all_debts, request.session['search_deb_query'])
+    request.session['debts'] = data
+    request.session['all_debts'] = all_debts
+    return render(request=request, template_name='exchange_app/debts.html',
+                  context={"data": data, 'query_list': query_list,
+                           'search_value': request.session.get('search_deb_query')})
 
 
 @permission_required('exchange_app.change_post')
 @login_required()
-def debts_see_more(request, academic_id):
+def debts_see_more(request, debt_id):
     debts_list = request.session['debts']
-    debt = search_debt(debts_list, academic_id)
+    debt = search_debt(request.session['all_debts'], debt_id, request.session['search_deb_query'])
+    common_debt = create_common_debt(debt, request.session['search_deb_query'])
     students = get_students()
-    student = search_user(students, debt["academic_student_id"])
-    return render(request=request, template_name='exchange_app/debts_see_more.html',
-                  context={"debt": debt, "user": student})
+    student = search_user(students, common_debt["student_id"])
+    if request.method == 'POST':
+        if request.session['search_deb_query'] == 'Академические':
+            flag = delete_debt(debt_id)
+        else:
+            flag = del_money_debt(debt_id)
+        if flag != -1:
+            messages.info(request, 'Удаление задолжности прошло успешно')
+        else:
+            messages.info(request, 'Удалить задолжность не удалось')
+        return redirect('/debts')
+    return render(request=request, template_name='exchange_app/debts.html',
+                  context={'modal': True, 'data': debts_list,
+                           'debt': common_debt, 'search_value': request.session['search_deb_query'],
+                           'query_list': request.session['debs_list'], 'user': student})
 
 
 @permission_required('exchange_app.change_post')
 @login_required()
-def delete_money_debt(request, money_id):
-    flag = del_money_debt(money_id)
-    if flag != -1:
-        messages.info(request, 'Удаление задолжности прошло успешно')
+def add_debt(request):
+    if request.session['debts']:
+        data = request.session['debts']
     else:
-        messages.info(request, 'Удалить задолжность не удалось')
-    return redirect('/debts')
-
-
-@permission_required('exchange_app.delete_post')
-@login_required()
-def delete_academic_debt(request, academic_id):
-    flag = delete_debt(academic_id)
-    if flag != -1:
-        messages.info(request, 'Удаление задолжности прошло успешно')
-    else:
-        messages.info(request, 'Удалить задолжность не удалось')
-    return redirect('/debts')
+        all_debts = get_debts_data(request.session['search_deb_query'])
+        data = create_common_debts(all_debts, request.session['search_deb_query'])
+        request.session['debts'] = data
+    if request.method == "POST":
+        if request.session['search_deb_query'] == 'Денежные':
+            send_data = {
+                'student_id': request.POST.get('id'),
+                'sum': request.POST.get('subject'),
+                'commentary': request.POST.get('commentary'),
+                'delivery_date': request.POST.get('date'),
+            }
+            create_money_debt(send_data)
+        else:
+            send_data = {
+                'student_id': request.POST.get('id'),
+                'subject': request.POST.get('subject'),
+                'commentary': request.POST.get('commentary'),
+                'delivery_date': request.POST.get('date'),
+            }
+            create_academic_debt(send_data)
+        return redirect('/debts')
+    return render(request=request, template_name='exchange_app/debts.html',
+                  context={'modal_add': True, 'data': data,
+                           'search_value': request.session['search_deb_query']})

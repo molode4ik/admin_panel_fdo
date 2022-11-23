@@ -3,7 +3,7 @@ import os
 import hashlib
 from django.contrib.auth.models import User, Group
 from django.core.files.storage import FileSystemStorage
-from .api_requests import admin_auth, get_error_requests, get_conf_requests
+from .api_requests import admin_auth, get_error_requests, get_conf_requests, get_all_academic_debts, get_all_money_debts
 
 
 def check_auth(username: str, password: str) -> [bool, int]:
@@ -63,10 +63,47 @@ def search_admin(admins: list, admin_id: int) -> dict:
             return admin
 
 
-def search_debt(debts: list, debt_id: int) -> list:
+def search_debt(debts: list, debt_id: int, debt_type: str) -> list:
+    search_val = 'money_id'
+    print(debt_type)
+    print(debt_id)
+    if debt_type == 'Академические':
+        search_val = 'academic_id'
     for debt in debts:
-        if debt_id == debt.get('academic_id'):
+        if debt_id == debt.get(search_val):
             return debt
+
+
+def create_common_debts(debts: list, debt_type: str):
+    result = []
+    search_value = 'money'
+    if debt_type == 'Академические':
+        search_value = 'academic'
+    for debt in debts:
+        result.append({
+            'debt_id': debt[f'{search_value}_id'],
+            'delivery_date': debt[f'{search_value}_delivery_date'],
+            'student_id': debt[f'{search_value}_student_id'],
+        })
+    return result
+
+
+def create_common_debt(debt: dict, debt_type: str):
+    if debt_type == 'Академические':
+        return {
+            'commentary': debt['academic_commentary'],
+            'student_id': debt['academic_student_id'],
+            'subject': debt['academic_subject'],
+            'delivery_date': debt['academic_delivery_date'],
+            'debt_id': debt['academic_id']
+        }
+    return {
+            'commentary': debt['money_commentary'],
+            'student_id': debt['money_student_id'],
+            'subject': debt['money_sum'],
+            'delivery_date': debt['money_delivery_date'],
+            'debt_id': debt['money_id']
+        }
 
 
 def search_teacher(teachers: list, teacher_id: int) -> dict:
@@ -92,5 +129,11 @@ def parse_file(uploaded_file):
 def get_data_from_req(reuqest_type: str):
     if reuqest_type.lower() == 'подтверждение':
         return get_conf_requests()
-    else:
-        return get_error_requests()
+    return get_error_requests()
+
+
+def get_debts_data(deb_type: str):
+    if deb_type.lower() == 'академические':
+        return get_all_academic_debts()
+    return get_all_money_debts()
+

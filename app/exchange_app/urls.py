@@ -7,7 +7,8 @@ urlpatterns = [
     path('', auth),
     path('index/', index),
     path('debts/', debts, name="debts"),
-    path('debts/see_more/<int:academic_id>', debts_see_more, name="debts_see_more"),
+    path('debts/<int:debt_id>', debts_see_more, name="debts_see_more"),
+    path('debts/create_debt', add_debt, name="add_debt"),
     path('teachers/', teachers, name="teachers"),
     path('teachers/add_teacher/', add_teacher, name="add_teacher"),
     path('teachers/<int:teacher_id>', change_teacher, name="change_teacher"),
@@ -25,6 +26,5 @@ urlpatterns = [
     path('admins/<int:admin_id>', change_admin, name='change_admin'),
     path('admins/delete_admin/<int:admin_id>', delete_admin, name='delete_admin'),
     path('admins/create_admin/', create_admin, name='create_admin'),
-    path('debts/delete_academic_debt/<int:academic_id>', delete_academic_debt, name='delete_academic_debt')
 ]
 

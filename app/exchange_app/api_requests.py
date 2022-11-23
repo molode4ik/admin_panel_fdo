@@ -116,3 +116,13 @@ def confirm_req(confirm_id: int):
 def delete_confirm_req(confirm_id: int):
     req = requests.post(api_url + 'delete_confirmation_request/' + str(confirm_id))
     return req.json()
+
+
+def create_money_debt(send_data: dict):
+    req = requests.post(api_url + 'create_money_debts', json=send_data)
+    return req.json()
+
+
+def create_academic_debt(send_data: dict):
+    req = requests.post(api_url + 'create_academic_debts', json=send_data)
+    return req.json()
