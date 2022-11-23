@@ -12,12 +12,13 @@ def check_auth(username: str, password: str) -> [bool, int]:
         'password': hash_password(password),
     }
     req_data = admin_auth(send_data)
+    permission = ''
     if req_data != -1:
         permission = req_data['admin_privilege']
         users = User.objects.values_list('username', flat=True)
         if username not in users:
             create_authed_users(username, password, permission.lower())
-        return True
+        return True, permission
     else:
         return False
 

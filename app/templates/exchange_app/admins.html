@@ -13,7 +13,7 @@
         </ul>
     {% endif %}
     <div class="container">
-        {% if perms.auth.change_permission %}
+        {% if perms.auth.delete_permission %}
             <a href="/admins/create_admin/">Создать админа</a>
             {% if modal_add %}
                 <script>document.querySelector("#addModal").addEventListener() </script>
@@ -61,12 +61,14 @@
                                     <td>{{ admin.admin_login }}</td>
                                     <td>{{ admin.admin_privilege }}</td>
                                     {% if perms.auth.change_permission %}
-                                        <form action="/admins/delete_admin/{{ admin.admin_id }}" method="POST">
-                                            {% csrf_token %}
-                                            <td>
-                                                <button type="submit">Удалить</button>
-                                            </td>
-                                        </form>
+                                        {% if perms.auth.delete_permisson %}
+                                            <form action="/admins/delete_admin/{{ admin.admin_id }}" method="POST">
+                                                {% csrf_token %}
+                                                <td>
+                                                    <button type="submit">Удалить</button>
+                                                </td>
+                                            </form>
+                                        {% endif %}
                                         <td><a href="/admins/{{ admin.admin_id }}">Подробнее</a></td>
                                         {% if modal %}
                                             <script>document.querySelector("#exampleModal").addEventListener() </script>

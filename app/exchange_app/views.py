@@ -9,18 +9,21 @@ from django.contrib import messages
 
 
 def auth(request):
-    if request.user.is_authenticated and request.session['user_password']:
-        if check_auth(request.user.username, request.session['user_password']):
-            return redirect("index/")
+    if request.user.is_authenticated and request.user.username != 'admin':
+        if request.session['user_password']:
+            if check_auth(request.user.username, request.session['user_password']):
+                return redirect("index/")
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        if check_auth(username=username, password=password):
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            request.session['user_password'] = password
-            print(user.get_group_permissions())
-            return redirect("index/")
+        if username and password:
+            flag, permission = check_auth(username=username, password=password)
+            if flag:
+                request.session['permission'] = permission
+                user = authenticate(username=username, password=password)
+                login(request, user)
+                request.session['user_password'] = password
+                return redirect("index/")
     return render(request=request, template_name='exchange_app/login.html')
 
 
@@ -128,6 +131,7 @@ def user_edit(request, user_id):
             'eos_password': request.POST.get('email'),
             'eos_login': request.POST.get('recordnumber'),
         }
+        update_student(send_data)
         return redirect('/users')
     return render(request=request, template_name='exchange_app/users.html',
                   context={'user': user, 'modal': True, 'user_data': user_list, 'groups': group_list})
@@ -148,6 +152,10 @@ def admins(request):
 def change_admin(request, admin_id):
     admins_list = request.session['admins_data']
     admin = search_admin(admins_list, admin_id)
+    modal = True
+    if request.session['permission'] == 'moderator':
+        if admin['admin_privilege'] in ['admin', 'moderator']:
+            modal = False
     if request.method == "POST":
         send_data = {
             'admin_id': admin_id,
@@ -157,7 +165,7 @@ def change_admin(request, admin_id):
         update_admin(send_data)
         return redirect('/admins')
     return render(request=request, template_name='exchange_app/admins.html',
-                  context={'admin': admin, 'modal': True, 'admins_data': admins_list,
+                  context={'admin': admin, 'modal': modal, 'admins_data': admins_list,
                            'admins_types': request.session['admins_type']})
 
 
