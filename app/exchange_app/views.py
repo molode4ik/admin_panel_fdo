@@ -5,21 +5,26 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login
 from .scripts import *
 from .api_requests import *
+from django.contrib import messages
 
 
 def auth(request):
-    if request.user.is_authenticated and request.session['user_password']:
-        if check_auth(request.user.username, request.session['user_password']):
-            return redirect("index/")
+    if request.user.is_authenticated and request.user.username != 'admin':
+        if request.session['user_password']:
+            if check_auth(request.user.username, request.session['user_password']):
+                return redirect("index/")
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        if check_auth(username=username, password=password):
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            request.session['user_password'] = password
-            print(user.get_group_permissions())
-            return redirect("index/")
+        if username and password:
+            flag, permission = check_auth(username=username, password=password)
+            if flag:
+                request.session['permission'] = permission
+                user = authenticate(username=username, password=password)
+                login(request, user)
+                print(user.get_all_permissions(),user.get_group_permissions() )
+                request.session['user_password'] = password
+                return redirect("index/")
     return render(request=request, template_name='exchange_app/login.html')
 
 
@@ -42,9 +47,9 @@ def teachers(request):
     if request.method == 'POST' and request.FILES:
         uploaded_file = request.FILES["document"]
         data = parse_file(uploaded_file)
-        print(data)
-        #пройтись циклом по файлу
-    return render(request=request, template_name='exchange_app/teachers.html', context={'teachers_data': teachers_data})
+        # пройтись циклом по файлу
+    return render(request=request, template_name='exchange_app/teachers.html',
+                  context={'teachers_data': teachers_data, 'flag': teachers_data})
 
 
 @permission_required("exchange_app.delete_teachers")
@@ -53,36 +58,47 @@ def add_teacher(request):
     if request.method == 'POST':
         send_data = {
             'name': f"{request.POST.get('lastname')} {request.POST.get('firstname')} {request.POST.get('middlename')}",
-            'email': request.POST.get('email'),
-            'phone': request.POST.get('phone')
+            'email': request.POST.get('teacher_email'),
+            'phone': request.POST.get('teacher_phone')
         }
         create_teacher(send_data)
         return redirect('/teachers')
-    return render(request=request, template_name='exchange_app/add_teacher.html', context={})
+    return render(request=request, template_name='exchange_app/teachers.html',
+                  context={'modal_add': True, 'teachers_data': request.session['teachers']})
 
 
 @permission_required("exchange_app.change_teachers")
 @login_required()
 def change_teacher(request, teacher_id):
-    teachers_list = request.session['teachers']
+    if request.session['teachers']:
+        teachers_list = request.session['teachers']
+    else:
+        teachers_list = get_teachers()
+        request.session['teachers'] = teachers_list
     teacher = search_teacher(teachers_list, teacher_id)
     if request.method == "POST":
         send_data = {
             'teacher_id': teacher.get('teacher_id'),
             'name': request.POST.get('teacher_name'),
-            'teacher_phone': request.POST.get('teacher_phone'),
-            'teacher_email': request.POST.get('teacher_email'),
+            'phone': request.POST.get('teacher_phone'),
+            'email': request.POST.get('teacher_email'),
         }
-        #update_admin(send_data)
+        update_teacher(send_data)
         return redirect('/teachers')
-    return render(request=request, template_name='exchange_app/teacher.html', context=teacher)
+    return render(request=request, template_name='exchange_app/teachers.html',
+                  context={'teacher': teacher, 'modal': True, 'teachers_data': teachers_list})
 
 
 @permission_required("exchange_app.delete_teachers")
 @login_required()
 def del_teacher(request, teacher_id):
-    #delete_admin_id(admin_id)
-    return redirect('/teachers')
+    if request.method == 'POST':
+        flag = delete_teacher(teacher_id)
+        if flag != -1:
+            messages.info(request, 'Удаление учителя прошло успешно')
+        else:
+            messages.info(request, 'Удалить учителя не удалось')
+        return redirect('/teachers')
 
 
 @permission_required("exchange_app.view_users")
@@ -94,7 +110,6 @@ def users(request):
         if search_query:
             find_data = search_users(str(search_query), user_data)
             user_data = find_data
-
     request.session['user_data'] = user_data
     return render(request=request, template_name='exchange_app/users.html', context={'user_data': user_data})
 
@@ -104,8 +119,23 @@ def users(request):
 def user_edit(request, user_id):
     user_list = request.session['user_data']
     user = search_user(user_list, user_id)
-    user_FIO = [user_list[0]["student_lastname"], user_list[0]["student_firstname"], user_list[0]["student_middlename"]]
-    return render(request=request, template_name='exchange_app/user_edit.html', context={'user': user, 'user_FIO': user_FIO})
+    group_list = get_groups()
+    if request.method == 'POST':
+        send_data = {
+            'student_id': user_id,
+            'group': request.POST.get('group'),
+            'firstname': request.POST.get('firstname'),
+            'lastname': request.POST.get('lastname'),
+            'middlename': request.POST.get('middlename'),
+            'email': request.POST.get('email'),
+            'record_number': request.POST.get('recordnumber'),
+            'eos_password': request.POST.get('eos_password'),
+            'eos_login': request.POST.get('eos_login'),
+        }
+        update_student(send_data)
+        return redirect('/users')
+    return render(request=request, template_name='exchange_app/users.html',
+                  context={'user': user, 'modal': True, 'user_data': user_list, 'groups': group_list})
 
 
 @permission_required('auth.view_permission')
@@ -113,7 +143,9 @@ def user_edit(request, user_id):
 def admins(request):
     admins_data = get_admins()
     request.session['admins_data'] = admins_data
-    return render(request=request, template_name='exchange_app/admins.html', context={'admins_data': admins_data})
+    request.session['admins_type'] = ['admin', 'moderator', 'viewer']
+    return render(request=request, template_name='exchange_app/admins.html',
+                  context={'admins_data': admins_data, 'flag': admins_data})
 
 
 @permission_required('auth.change_permission')
@@ -121,6 +153,10 @@ def admins(request):
 def change_admin(request, admin_id):
     admins_list = request.session['admins_data']
     admin = search_admin(admins_list, admin_id)
+    modal = True
+    if request.session['permission'] == 'moderator':
+        if admin['admin_privilege'] in ['admin', 'moderator']:
+            modal = False
     if request.method == "POST":
         send_data = {
             'admin_id': admin_id,
@@ -129,19 +165,31 @@ def change_admin(request, admin_id):
         }
         update_admin(send_data)
         return redirect('/admins')
-    return render(request=request, template_name='exchange_app/admin.html', context=admin)
+    return render(request=request, template_name='exchange_app/admins.html',
+                  context={'admin': admin, 'modal': modal, 'admins_data': admins_list,
+                           'admins_types': request.session['admins_type']})
 
 
 @permission_required('auth.delete_permission')
 @login_required()
 def delete_admin(request, admin_id):
-    delete_admin_id(admin_id)
-    return redirect('/admins')
+    if request.method == 'POST':
+        flag = delete_admin_id(admin_id)
+        if flag != -1:
+            messages.info(request, 'Удаление Админа прошло успешно')
+        else:
+            messages.info(request, 'Удалить Админа не удалось')
+        return redirect('/admins')
 
 
 @permission_required('auth.delete_permission')
 @login_required()
 def create_admin(request):
+    if request.session['admins_data']:
+        admins_list = request.session['admins_data']
+    else:
+        admins_list = get_admins()
+        request.session['admins_data'] = admins_list
     if request.method == "POST":
         send_data = {
             'name': request.POST.get('admin_name'),
@@ -151,85 +199,158 @@ def create_admin(request):
         }
         add_admin(send_data)
         return redirect('/admins')
-    return render(request=request, template_name='exchange_app/create_admin.html')
+    return render(request=request, template_name='exchange_app/admins.html',
+                  context={'modal_add': True, 'admins_data': admins_list,
+                           'admins_types': request.session['admins_type']})
 
 
 @permission_required('exchange_app.view_post')
 @login_required()
 def timetables(request):
     ids = get_groups()
+    shedule = get_shedule(ids[0])
+    search_query = ids[0]
     if request.method == 'POST':
         search_query = request.POST.get('search')
         shedule = get_shedule(search_query)
-        request.session["search"] = search_query
-        return render(request=request, template_name='exchange_app/timetable.html', context={'shedule': shedule, 'number': ids})
-    return render(request=request, template_name='exchange_app/timetable.html', context={'number': ids})
+    return render(request=request, template_name='exchange_app/timetable.html',
+                  context={'number': ids, 'shedule': shedule, 'search_query': search_query})
 
 
 @permission_required('exchange_app.view_post')
 @login_required()
 def update_timetable(request):
-    update_shedule()
-    return redirect('/timetable')
+    flag = update_shedule()
+    if flag != -1:
+        messages.info(request, 'Обновление расписания прошло успешно')
+    else:
+        messages.info(request, 'Обновить расписание не удалось')
+    return redirect('/timetable', contetx={'flag': flag})
 
 
-def table_request(request):
-    table = [
-        {
-            "id": "88",
-            "FIO": "Хорошун Данил Алексеевич",
-            "numbers": "89876561278",
-            "record_book": "432123",
-            "view_requests": "Смена пароля"
-
-        },
-        {
-            "id": "89",
-            "FIO": "Соколов Денис Александрович",
-            "numbers": "897686544319",
-            "record_book": "980543",
-            "view_requests": "подтверждение зачетки"
-        },
-        {
-            "id": "90",
-            "FIO": "Ряпалов Дмитрий Николаевич",
-            "numbers": "89172191267",
-            "record_book": "970676",
-            "view_requests": "Chill"
-        }
-        ]
-
+@permission_required('exchange_app.view_post')
+@login_required()
+def table_requests(request):
+    query_list = ['Подтверждение', 'Фидбек']
+    if request.session.get('search_query') is None:
+        request.session['search_query'] = query_list[0]
     if request.method == 'POST':
-        data = request.POST['data']
-        data_id = re.findall('(\d+)', data)
-        data_users = [i for i in table if i['id'] == data_id[0]]
+        search_query = request.POST.get('search')
+        request.session['search_query'] = search_query
+    data = get_data_from_req(request.session['search_query'])
+    return render(request=request, template_name='exchange_app/table_request.html',
+                  context={'search_value': request.session.get('search_query'), 'data': data, 'query_list': query_list})
 
-        return render(request=request, template_name='exchange_app/edit_requests.html', context={ 'data_users': data_users})
-    return render(request=request, template_name='exchange_app/table_request.html', context={'table': table})
+
+@permission_required('exchange_app.change_post')
+@login_required()
+def remove_error_request(request, error_id: int):
+    flag = del_error_request(error_id)
+    if flag != -1:
+        messages.info(request, 'Удаление запроса прошло успешно')
+    else:
+        messages.info(request, 'Удалить запрос не удалось')
+    return redirect('/table_requests/', context={'flag': flag, 'search_query': request.session['search_query']})
 
 
+@permission_required('exchange_app.change_post')
+@login_required()
+def confirm_request(request, confirm_id):
+    flag = confirm_req(confirm_id)
+    if flag != -1:
+        messages.info(request, 'Подтверждение прошло успешно')
+    else:
+        messages.info(request, 'Подтверждение не удалось')
+    return redirect('/table_requests/', context={'flag': flag, 'search_query': request.session['search_query']})
+
+
+@permission_required('exchange_app.change_post')
+@login_required()
+def delete_confirm_request(request, confirm_id):
+    flag = delete_confirm_req(confirm_id)
+    if flag != -1:
+        messages.info(request, 'Удаление прошло успешно')
+    else:
+        messages.info(request, 'Удаление не удалось')
+    return redirect('/table_requests/', context={'flag': flag, 'search_query': request.session['search_query']})
+
+
+@permission_required('exchange_app.change_post')
+@login_required()
 def edit_requests(request):
-
     return render(request=request, template_name='exchange_app/edit_requests.html')
 
 
 @permission_required('exchange_app.change_post')
 @login_required()
 def debts(request):
-    debts = get_all_academic_debts()
+    query_list = ['Академические', 'Денежные']
+    request.session['debs_list'] = query_list
+    if request.session.get('search_deb_query') is None:
+        request.session['search_deb_query'] = query_list[0]
+    if request.method == 'POST':
+        search_query = request.POST.get('search')
+        request.session['search_deb_query'] = search_query
+    all_debts = get_debts_data(request.session['search_deb_query'])
+    data = create_common_debts(all_debts, request.session['search_deb_query'])
+    request.session['debts'] = data
+    request.session['all_debts'] = all_debts
+    return render(request=request, template_name='exchange_app/debts.html',
+                  context={"data": data, 'query_list': query_list,
+                           'search_value': request.session.get('search_deb_query')})
 
-    if request.method == 'POST' and request.FILES:
-        uploaded_file = request.FILES["document"]
-        print(uploaded_file)
-    request.session['debts'] = debts
-    return render(request=request, template_name='exchange_app/debts.html', context={"debts": debts})
 
-
-def debts_see_more(request, academic_id):
+@permission_required('exchange_app.change_post')
+@login_required()
+def debts_see_more(request, debt_id):
     debts_list = request.session['debts']
-    debt = search_debt(debts_list, academic_id)
-    users = get_students()
+    debt = search_debt(request.session['all_debts'], debt_id, request.session['search_deb_query'])
+    common_debt = create_common_debt(debt, request.session['search_deb_query'])
+    students = get_students()
+    student = search_user(students, common_debt["student_id"])
+    if request.method == 'POST':
+        if request.session['search_deb_query'] == 'Академические':
+            flag = delete_debt(debt_id)
+        else:
+            flag = del_money_debt(debt_id)
+        if flag != -1:
+            messages.info(request, 'Удаление задолжности прошло успешно')
+        else:
+            messages.info(request, 'Удалить задолжность не удалось')
+        return redirect('/debts')
+    return render(request=request, template_name='exchange_app/debts.html',
+                  context={'modal': True, 'data': debts_list,
+                           'debt': common_debt, 'search_value': request.session['search_deb_query'],
+                           'query_list': request.session['debs_list'], 'user': student})
 
-    user = search_user(users, debt["academic_student_id"])
 
-    return render(request=request, template_name='exchange_app/debts_see_more.html', context={ "debt": debt, "user": user})
+@permission_required('exchange_app.change_post')
+@login_required()
+def add_debt(request):
+    if request.session['debts']:
+        data = request.session['debts']
+    else:
+        all_debts = get_debts_data(request.session['search_deb_query'])
+        data = create_common_debts(all_debts, request.session['search_deb_query'])
+        request.session['debts'] = data
+    if request.method == "POST":
+        if request.session['search_deb_query'] == 'Денежные':
+            send_data = {
+                'student_id': request.POST.get('id'),
+                'sum': request.POST.get('subject'),
+                'commentary': request.POST.get('commentary'),
+                'delivery_date': request.POST.get('date'),
+            }
+            create_money_debt(send_data)
+        else:
+            send_data = {
+                'student_id': request.POST.get('id'),
+                'subject': request.POST.get('subject'),
+                'commentary': request.POST.get('commentary'),
+                'delivery_date': request.POST.get('date'),
+            }
+            create_academic_debt(send_data)
+        return redirect('/debts')
+    return render(request=request, template_name='exchange_app/debts.html',
+                  context={'modal_add': True, 'data': data,
+                           'search_value': request.session['search_deb_query']})

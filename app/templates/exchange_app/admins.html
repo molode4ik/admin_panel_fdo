@@ -1,68 +1,164 @@
 {% extends 'base.html' %}
-
 {% load static %}
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-offset-1 col-md-10">
-            <div class="panel">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col col-sm-3 col-xs-12">
-                            <h4 class="title">Data <span>List</span></h4>
-                        </div>
-                        <div class="col-sm-9 col-xs-12 text-right">
-                            <div class="btn_group">
-
-                                <form action="{% url 'admins' %}" method="POST">
-                                    {% csrf_token %}
-                                    <input type="text" class="form-control" placeholder="Search" name="search">
-                                </form>
-                                <form action="{% url 'admins' %}" method="POST">
-                                    {% csrf_token %}
-                                    <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i> сбросить</button>
-                                </form>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <div class="container">
+        {% if perms.auth.delete_permission %}
+            <a href="/admins/create_admin/">Создать админа</a>
+            {% if modal_add %}
+                <script>document.querySelector("#addModal").addEventListener() </script>
+            {% endif %}
+        {% endif %}
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col col-sm-3 col-xs-12">
+                                <h4 class="title">Data <span>List</span></h4>
                             </div>
+                            {#                            <div class="col-sm-9 col-xs-12 text-right">#}
+                            {#                                <div class="btn_group">#}
+                            {#                                    <form action="{% url 'admins' %}" method="POST">#}
+                            {#                                        {% csrf_token %}#}
+                            {#                                        <input type="text" class="form-control" placeholder="Search" name="search">#}
+                            {#                                    </form>#}
+                            {#                                    <form action="{% url 'admins' %}" method="POST">#}
+                            {#                                        {% csrf_token %}#}
+                            {#                                        <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i>#}
+                            {#                                            сбросить#}
+                            {#                                        </button>#}
+                            {#                                    </form>#}
+                            {#                                </div>#}
+                            {#                            </div>#}
                         </div>
                     </div>
-                </div>
-                <div class="panel-body table-responsive">
-                    <table class="table">
-                        <thead>
+                    <div class="panel-body table-responsive">
+                        <table class="table">
+                            <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Имя</th>
                                 <th>Логин</th>
                                 <th>Привилегия</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for admin in admins_data %}
-                            <tr>
-                                <td> {{ admin.admin_id }}
-                                <td>{{ admin.admin_name}}</td>
-                                <td>{{ admin.admin_login }}</td>
-                                <td>{{ admin.admin_privilege }}</td>
-                                {% if perms.auth.change_permission %}
-                                    <td><a href="/admins/{{ admin.admin_id }}">Подробнее</a></td>
-                                    <td><a href="/admins/delete_admin/{{ admin.admin_id }}">Удалить</a></td>
-
+                                {% if perms.auth.delete_permission %}
+                                    <th>Подробнее</th>
+                                    <th>Удалить</th>
                                 {% endif %}
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    {% if perms.auth.change_permission %}
-                        <a href="/admins/create_admin/">Создать</a>
-                    {% endif %}
+                            </thead>
+                            <tbody>
+                            {% for admin in admins_data %}
+                                <tr>
+                                    <td> {{ admin.admin_id }}
+                                    <td>{{ admin.admin_name }}</td>
+                                    <td>{{ admin.admin_login }}</td>
+                                    <td>{{ admin.admin_privilege }}</td>
+                                    {% if perms.auth.delete_permission %}
+                                        <td><a href="/admins/{{ admin.admin_id }}">Подробнее</a></td>
+                                        <form action="/admins/delete_admin/{{ admin.admin_id }}" method="POST">
+                                            {% csrf_token %}
+                                            <td>
+                                                <button type="submit">Удалить</button>
+                                            </td>
+                                        </form>
+                                        {% if modal %}
+                                            <script>document.querySelector("#exampleModal").addEventListener() </script>
+                                        {% endif %}
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    {% if admin and modal %}
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Подробнее</h1>
+                        <a href="/admins">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </a>
+                    </div>
+                    <form action="" method="POST">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <input value="{{ admin.admin_name }}" name="admin_name" pattern="^[A-Za-z0-9]+$"
+                                   title="только буквы">
+                            <select class="form-select form-select-lg mb-3" name="admin_privilege"
+                                    aria-label=".form-select-lg example">
+                                {% for type in admins_types %}
+                                    <option {% if admin.admin_privilege == type %}
+                                        selected {% endif %}> {{ type }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="/admins">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть</button>
+                            </a>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if modal_add %}
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Добавление</h1>
+                        <a href="/admins">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </a>
+                    </div>
+                    <form action="" method="POST">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <label for="fullname">Имя</label>
+                            <input class="form-styling" type="text" name="admin_name" placeholder=""
+                                   value="" title="только буквы" pattern="[А-Яа-я]{2,32}" required/>
+                            <label for="fullname">Логин</label>
+                            <input class="form-styling" type="text" name="admin_login" placeholder=""
+                                   value="" title="только буквы" pattern="[a-zA-Z][a-zA-Z0-9]{0,19}" required/>
+                            <label for="password">Пароль</label>
+                            <input class="form-styling" type="text" name="admin_password" placeholder=""
+                                   value="" title="только буквы" pattern="[a-zA-Z][a-zA-Z0-9]{0,19}" required/>
+                            <select class="form-select form-select-lg mb-3" name="admin_privilege"
+                                    aria-label=".form-select-lg example">
+                                <option> admin</option>
+                                <option> moderator</option>
+                                <option> viewer</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="/admins">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть</button>
+                            </a>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
 {% endblock %}
