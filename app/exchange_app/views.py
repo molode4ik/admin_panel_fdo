@@ -76,18 +76,20 @@ def change_teacher(request, teacher_id):
         }
         update_teacher(send_data)
         return redirect('/teachers')
-    return render(request=request, template_name='exchange_app/teacher.html', context=teacher)
+    return render(request=request, template_name='exchange_app/teachers.html',
+                  context={'teacher': teacher, 'modal': True, 'teachers_data': teachers_list})
 
 
 @permission_required("exchange_app.delete_teachers")
 @login_required()
 def del_teacher(request, teacher_id):
-    flag = delete_teacher(teacher_id)
-    if flag != -1:
-        messages.info(request, 'Удаление учителя прошло успешно')
-    else:
-        messages.info(request, 'Удалить учителя не удалось')
-    return redirect('/teachers')
+    if request.method == 'POST':
+        flag = delete_teacher(teacher_id)
+        if flag != -1:
+            messages.info(request, 'Удаление учителя прошло успешно')
+        else:
+            messages.info(request, 'Удалить учителя не удалось')
+        return redirect('/teachers')
 
 
 @permission_required("exchange_app.view_users")
@@ -108,6 +110,7 @@ def users(request):
 def user_edit(request, user_id):
     user_list = request.session['user_data']
     user = search_user(user_list, user_id)
+    group_list = get_groups()
     if request.method == 'POST':
         send_data = {
             'student_id': user_id,
@@ -120,9 +123,9 @@ def user_edit(request, user_id):
             'eos_password': request.POST.get('email'),
             'eos_login': request.POST.get('recordnumber'),
         }
-        update_student(send_data)
         return redirect('/users')
-    return render(request=request, template_name='exchange_app/user_edit.html', context={'user': user})
+    return render(request=request, template_name='exchange_app/users.html',
+                  context={'user': user, 'modal': True, 'user_data': user_list, 'groups': group_list})
 
 
 @permission_required('auth.view_permission')

@@ -2,31 +2,31 @@
 
 {% load static %}
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
 {% endblock %}
 
 {% block content %}
 
-<form enctype="multipart/form-data" method="post">
-    {% csrf_token %}
-    <input accept=".csv, .json" type="file" name="document">
-    <button type="submit">Загрузить</button>
-</form>
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        <input accept=".csv, .json" type="file" name="document">
+        <button type="submit">Загрузить</button>
+    </form>
     <ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-<a href="add_teacher/">Создать</a>
-<div class="container">
-    <div class="row">
-        <div class="col-md-offset-1 col-md-10">
-            <div class="panel">
-                <div class="panel-heading">
-                </div>
-                <div class="panel-body table-responsive">
-                    <table class="table">
-                        <thead>
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    <a href="add_teacher/">Создать</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <div class="panel">
+                    <div class="panel-heading">
+                    </div>
+                    <div class="panel-body table-responsive">
+                        <table class="table">
+                            <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Ф.И.О.</th>
@@ -34,27 +34,65 @@
                                 <th></th>
                                 <th></th>
                             </tr>
-                        </thead>
-                        <tbody>
-                        {% for teacher in teachers_data %}
-                            <tr>
-                                <td>{{ teacher.teacher_id }}</td>
-                                <td>{{ teacher.teacher_name }}</td>
-                                <td>{{ teacher.teacher_phone }}</td>
-                                <td>
-                                    <a href="/teachers/{{ teacher.teacher_id }}">Подробнее</a>
-                                </td>
-                                <td>
-                                    <a href="/teachers/delete_teacher/{{ teacher.teacher_id }}">Удалить</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            {% for teacher in teachers_data %}
+                                <tr>
+                                    <td>{{ teacher.teacher_id }}</td>
+                                    <td>{{ teacher.teacher_name }}</td>
+                                    <td>{{ teacher.teacher_phone }}</td>
+                                     <td><a href="/teachers/{{ teacher.teacher_id }}">Подробнее</a></td>
+                                        {% if modal %}
+                                            <script>document.querySelector("#exampleModal").addEventListener() </script>
+                                        {% endif %}
+                                        <form action="/teachers/delete_teacher/{{ teacher.teacher_id }}" method="POST">
+                                            {% csrf_token %}
+                                            <td>
+                                                <button type="submit">Удалить</button>
+                                            </td>
+                                        </form>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
+    {% if teacher and modal %}
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Подробнее</h1>
+                        <a href="/teachers">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </a>
+                    </div>
+                    <form action="" method="POST">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <label for="fullname">ФИО</label>
+                            <input class="form-styling" type="text" name="teacher_name" placeholder=""
+                                   value="{{ teacher.teacher_name }}"/>
+                            <label for="fullname">Телефон</label>
+                            <input class="form-styling" type="text" name="teacher_phone" placeholder=""
+                                   value="{{ teacher.teacher_phone }}"/>
+                            <label for="fullname">email</label>
+                            <input class="form-styling" type="text" name="teacher_email" placeholder=""
+                                   value="{{ teacher.teacher_email }}"/>
+                            <div class="modal-footer">
+                                <a href="/teachers">
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть
+                                    </button>
+                                </a>
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

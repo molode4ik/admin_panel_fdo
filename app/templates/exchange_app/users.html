@@ -2,37 +2,38 @@
 
 {% load static %}
 {% block head %}
-  <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
 {% endblock %}
 
 {% block content %}
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-offset-1 col-md-10">
-            <div class="panel">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col col-sm-3 col-xs-12">
-                            <h4 class="title">Data <span>List</span></h4>
-                        </div>
-                        <div class="col-sm-9 col-xs-12 text-right">
-                            <div class="btn_group">
-                                <form action="{% url 'users' %}" method="POST">
-                                    {% csrf_token %}
-                                    <input type="text" class="form-control" placeholder="Search" name="search">
-                                </form>
-                                <form action="{% url 'users' %}" method="POST">
-                                    {% csrf_token %}
-                                    <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i>Сбросить</button>
-                                </form>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col col-sm-3 col-xs-12">
+                                <h4 class="title">Data <span>List</span></h4>
+                            </div>
+                            <div class="col-sm-9 col-xs-12 text-right">
+                                <div class="btn_group">
+                                    <form action="{% url 'users' %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="text" class="form-control" placeholder="Search" name="search">
+                                    </form>
+                                    <form action="{% url 'users' %}" method="POST">
+                                        {% csrf_token %}
+                                        <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i>Сбросить
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="panel-body table-responsive">
-                    <table class="table">
-                        <thead>
+                    <div class="panel-body table-responsive">
+                        <table class="table">
+                            <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Ф.И.О.</th>
@@ -41,49 +42,87 @@
                                 <th></th>
                                 <th></th>
                             </tr>
-                        </thead>
-                        <tbody>
-                        {% for user in user_data %}
-                            <tr>
-                                <td>{{ user.student_id }}</td>
-                                <td>{{ user.student_lastname}} {{user.student_firstname}} {{user.student_middlename}}</td>
-                                <td>{{ user.student_record_number }}</td>
-                                <td>{{ user.student_email }}</td>
-                                {% if perms.exchange_app.change_users %}
-                                <td>
-                                    <a href="/users/edit/{{ user.student_id }}">Подробнее</a>
-                                </td>
-{#                                <td>#}
-{#                                    <form action="{% url 'users' %}" method="POST">#}
-{#                                        {% csrf_token %}#}
-{#                                        <button class="btn btn-default" title="Delete"><i class="fa fa-sync-alt"></i>Удалить</button>#}
-{#                                    </form>#}
-{#                                </td>#}
-                                {% endif %}
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            {% for user in user_data %}
+                                <tr>
+                                    <td>{{ user.student_id }}</td>
+                                    <td>{{ user.student_lastname }} {{ user.student_firstname }} {{ user.student_middlename }}</td>
+                                    <td>{{ user.student_record_number }}</td>
+                                    <td>{{ user.student_email }}</td>
+                                    {% if perms.exchange_app.change_users %}
+                                        <td><a href="/users/{{ user.student_id }}">Подробнее</a></td>
+                                        {% if modal %}
+                                            <script>document.querySelector("#exampleModal").addEventListener() </script>
+                                        {% endif %}
+                                        {#                                <td>#}
+                                        {#                                    <form action="{% url 'users' %}" method="POST">#}
+                                        {#                                        {% csrf_token %}#}
+                                        {#                                        <button class="btn btn-default" title="Delete"><i class="fa fa-sync-alt"></i>Удалить</button>#}
+                                        {#                                    </form>#}
+                                        {#                                </td>#}
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-{#                <div class="panel-footer">#}
-{#                    <div class="row">#}
-{#                        <div class="col col-sm-6 col-xs-6">showing <b>5</b> out of <b>25</b> entries</div>#}
-{#                            <div class="col-sm-6 col-xs-6">#}
-{#                                <ul class="pagination hidden-xs pull-right">#}
-{#                                    <li><a href="#"><</a></li>#}
-{#                                    <li class="active"><a href="#">1</a></li>#}
-{#                                    <li><a href="#">2</a></li>#}
-{#                                    <li><a href="#">3</a></li>#}
-{#                                    <li><a href="#">4</a></li>#}
-{#                                    <li><a href="#">5</a></li>#}
-{#                                    <li><a href="#">></a></li>#}
-{#                                </ul>#}
-{#                            </div>#}
-{#                    </div>#}
-{#                </div>#}
             </div>
         </div>
     </div>
-</div>
-
+    {% if user and modal %}
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Подробнее</h1>
+                        <a href="/users">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </a>
+                    </div>
+                    <form action="" method="POST">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <label for="fullname">Фамилия</label>
+                            <input class="form-styling" type="text" name="lastname" placeholder=""
+                                   value="{{ user.student_lastname }}"/>
+                            <label for="fullname">Имя</label>
+                            <input class="form-styling" type="text" name="firstname" placeholder=""
+                                   value="{{ user.student_firstname }}"/>
+                            <label for="fullname">Отчество</label>
+                            <input class="form-styling" type="text" name="middlename" placeholder=""
+                                   value="{{ user.student_middlename }}"/>
+                            <label for="dlno">Номер зачетной книжки</label>
+                            <input class="form-styling" type="text" name="recordnumber" placeholder=""
+                                   value="{{ user.student_record_number }}"/>
+                            <label for="password">email</label>
+                            <input class="form-styling" type="text" name="email" placeholder=""
+                                   value="{{ user.student_email }}"/>
+                            <select class="form-select form-select-lg mb-3" name="group"
+                                    aria-label=".form-select-lg example">
+                                {% for group in groups %}
+                                        <option {% if user.student_group == group %}
+                                            selected {% endif %}> {{ group }}</option>
+                                    {% endfor %}
+                            </select>
+                            <label for="password">eos login</label>
+                            <input class="form-styling" type="text" name="eos_login" placeholder=""
+                                   value="{{ user.student_eos_login }}"/>
+                            <label for="password">eos password</label>
+                            <input class="form-styling" type="text" name="eos_password" placeholder=""
+                                   value="{{ user.student_eos_password }}"/>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="/users">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть</button>
+                            </a>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

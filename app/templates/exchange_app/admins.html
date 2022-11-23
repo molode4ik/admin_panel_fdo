@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block head %}
-    <script src="https://code.jquery.com/jquery-3.6.1.js"
-            integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'css/users.css' %}"/>
 {% endblock %}
 
@@ -26,21 +24,20 @@
                             <div class="col col-sm-3 col-xs-12">
                                 <h4 class="title">Data <span>List</span></h4>
                             </div>
-                            <div class="col-sm-9 col-xs-12 text-right">
-                                <div class="btn_group">
-
-                                    <form action="{% url 'admins' %}" method="POST">
-                                        {% csrf_token %}
-                                        <input type="text" class="form-control" placeholder="Search" name="search">
-                                    </form>
-                                    <form action="{% url 'admins' %}" method="POST">
-                                        {% csrf_token %}
-                                        <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i>
-                                            сбросить
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+{#                            <div class="col-sm-9 col-xs-12 text-right">#}
+{#                                <div class="btn_group">#}
+{#                                    <form action="{% url 'admins' %}" method="POST">#}
+{#                                        {% csrf_token %}#}
+{#                                        <input type="text" class="form-control" placeholder="Search" name="search">#}
+{#                                    </form>#}
+{#                                    <form action="{% url 'admins' %}" method="POST">#}
+{#                                        {% csrf_token %}#}
+{#                                        <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i>#}
+{#                                            сбросить#}
+{#                                        </button>#}
+{#                                    </form>#}
+{#                                </div>#}
+{#                            </div>#}
                         </div>
                     </div>
                     <div class="panel-body table-responsive">
@@ -62,20 +59,14 @@
                                     <td>{{ admin.admin_privilege }}</td>
                                     {% if perms.auth.change_permission %}
                                         <form action="/admins/delete_admin/{{ admin.admin_id }}" method="POST">
-                                        {% csrf_token %}
-                                            <td><button type="submit">Удалить</button></td>
+                                            {% csrf_token %}
+                                            <td>
+                                                <button type="submit">Удалить</button>
+                                            </td>
                                         </form>
                                         <td><a href="/admins/{{ admin.admin_id }}">Подробнее</a></td>
                                         {% if modal %}
-                                            <script>
-                                                window.addEventListener('load', function () {
-                                                    const elemModal = document.querySelector('#exampleModal');
-                                                    const modal = new bootstrap.Modal(elemModal);
-                                                    modal.show();
-                                                    console.log(modal)
-                                                });
-                                                document.querySelector("#exampleModal").addEventListener()
-                                            </script>
+                                            <script>document.querySelector("#exampleModal").addEventListener() </script>
                                         {% endif %}
                                     {% endif %}
                                 </tr>
@@ -87,41 +78,39 @@
             </div>
         </div>
     </div>
-    <!-- Button trigger modal -->
-
-    {#    {% if admin %}#}
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                    <a href="/admins">
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </a>
-                </div>
-                <form action="" method="POST">
-                    <div class="modal-body">
-                        {% csrf_token %}
-                        <input value="{{ admin.admin_name }}" name="admin_name" pattern="^[A-Za-z0-9]+$"
-                               title="только буквы">
-                        <select class="form-select form-select-lg mb-3" name="admin_privilege"
-                                aria-label=".form-select-lg example">
-                            {% for type in admins_types %}
-                                <option {% if admin.admin_privilege == type %} selected {% endif %}> {{ type }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="modal-footer">
+    {% if admin and modal %}
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Подробнее</h1>
                         <a href="/admins">
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </a>
-                        <button type="submit" class="btn btn-primary">Сохранить</button>
-
                     </div>
-                </form>
+                    <form action="" method="POST">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <input value="{{ admin.admin_name }}" name="admin_name" pattern="^[A-Za-z0-9]+$"
+                                   title="только буквы">
+                            <select class="form-select form-select-lg mb-3" name="admin_privilege"
+                                    aria-label=".form-select-lg example">
+                                {% for type in admins_types %}
+                                    <option {% if admin.admin_privilege == type %}
+                                        selected {% endif %}> {{ type }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="/admins">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть</button>
+                            </a>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-    {#    {% endif %}#}
+    {% endif %}
 {% endblock %}
