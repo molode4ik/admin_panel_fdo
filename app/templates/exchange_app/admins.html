@@ -15,6 +15,9 @@
     <div class="container">
         {% if perms.auth.change_permission %}
             <a href="/admins/create_admin/">Создать админа</a>
+            {% if modal_add %}
+                <script>document.querySelector("#addModal").addEventListener() </script>
+            {% endif %}
         {% endif %}
         <div class="row">
             <div class="col-md-offset-1 col-md-10">
@@ -24,20 +27,20 @@
                             <div class="col col-sm-3 col-xs-12">
                                 <h4 class="title">Data <span>List</span></h4>
                             </div>
-{#                            <div class="col-sm-9 col-xs-12 text-right">#}
-{#                                <div class="btn_group">#}
-{#                                    <form action="{% url 'admins' %}" method="POST">#}
-{#                                        {% csrf_token %}#}
-{#                                        <input type="text" class="form-control" placeholder="Search" name="search">#}
-{#                                    </form>#}
-{#                                    <form action="{% url 'admins' %}" method="POST">#}
-{#                                        {% csrf_token %}#}
-{#                                        <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i>#}
-{#                                            сбросить#}
-{#                                        </button>#}
-{#                                    </form>#}
-{#                                </div>#}
-{#                            </div>#}
+                            {#                            <div class="col-sm-9 col-xs-12 text-right">#}
+                            {#                                <div class="btn_group">#}
+                            {#                                    <form action="{% url 'admins' %}" method="POST">#}
+                            {#                                        {% csrf_token %}#}
+                            {#                                        <input type="text" class="form-control" placeholder="Search" name="search">#}
+                            {#                                    </form>#}
+                            {#                                    <form action="{% url 'admins' %}" method="POST">#}
+                            {#                                        {% csrf_token %}#}
+                            {#                                        <button class="btn btn-default" title="Reload"><i class="fa fa-sync-alt"></i>#}
+                            {#                                            сбросить#}
+                            {#                                        </button>#}
+                            {#                                    </form>#}
+                            {#                                </div>#}
+                            {#                            </div>#}
                         </div>
                     </div>
                     <div class="panel-body table-responsive">
@@ -113,4 +116,45 @@
             </div>
         </div>
     {% endif %}
+    {% if modal_add %}
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Добавление</h1>
+                        <a href="/admins">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </a>
+                    </div>
+                    <form action="" method="POST">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <label for="fullname">Имя</label>
+                            <input class="form-styling" type="text" name="admin_name" placeholder=""
+                                   value="" title="только буквы"/>
+                            <label for="fullname">Логин</label>
+                            <input class="form-styling" type="text" name="admin_login" placeholder=""
+                                   value="" title="только буквы"/>
+                            <label for="password">Пароль</label>
+                            <input class="form-styling" type="text" name="admin_password" placeholder=""
+                                   value="" title="только буквы"/>
+                            <select class="form-select form-select-lg mb-3" name="admin_privilege"
+                                    aria-label=".form-select-lg example">
+                                <option> admin</option>
+                                <option> moderator</option>
+                                <option> viewer</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="/admins">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть</button>
+                            </a>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
 {% endblock %}

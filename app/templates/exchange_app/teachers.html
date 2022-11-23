@@ -18,6 +18,9 @@
         {% endfor %}
     </ul>
     <a href="add_teacher/">Создать</a>
+    {% if modal_add %}
+                <script>document.querySelector("#addModal").addEventListener() </script>
+            {% endif %}
     <div class="container">
         <div class="row">
             <div class="col-md-offset-1 col-md-10">
@@ -41,16 +44,16 @@
                                     <td>{{ teacher.teacher_id }}</td>
                                     <td>{{ teacher.teacher_name }}</td>
                                     <td>{{ teacher.teacher_phone }}</td>
-                                     <td><a href="/teachers/{{ teacher.teacher_id }}">Подробнее</a></td>
-                                        {% if modal %}
-                                            <script>document.querySelector("#exampleModal").addEventListener() </script>
-                                        {% endif %}
-                                        <form action="/teachers/delete_teacher/{{ teacher.teacher_id }}" method="POST">
-                                            {% csrf_token %}
-                                            <td>
-                                                <button type="submit">Удалить</button>
-                                            </td>
-                                        </form>
+                                    <td><a href="/teachers/{{ teacher.teacher_id }}">Подробнее</a></td>
+                                    {% if modal %}
+                                        <script>document.querySelector("#exampleModal").addEventListener() </script>
+                                    {% endif %}
+                                    <form action="/teachers/delete_teacher/{{ teacher.teacher_id }}" method="POST">
+                                        {% csrf_token %}
+                                        <td>
+                                            <button type="submit">Удалить</button>
+                                        </td>
+                                    </form>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -90,6 +93,41 @@
                                 </a>
                                 <button type="submit" class="btn btn-primary">Сохранить</button>
                             </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if modal_add %}
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Добавление</h1>
+                        <a href="/teachers">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </a>
+                    </div>
+                    <form action="" method="POST">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <label for="fullname">ФИО</label>
+                            <input class="form-styling" type="text" name="teacher_name" placeholder=""
+                                   value=""/>
+                            <label for="fullname">Телефон</label>
+                            <input class="form-styling" type="text" name="teacher_phone" placeholder=""
+                                   value=""/>
+                            <label for="fullname">email</label>
+                            <input class="form-styling" type="text" name="teacher_email" placeholder=""
+                                   value=""/>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="/teachers">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть</button>
+                            </a>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                        </div>
                     </form>
                 </div>
             </div>

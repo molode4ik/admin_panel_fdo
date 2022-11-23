@@ -59,7 +59,8 @@ def add_teacher(request):
         }
         create_teacher(send_data)
         return redirect('/teachers')
-    return render(request=request, template_name='exchange_app/add_teacher.html', context={})
+    return render(request=request, template_name='exchange_app/teachers.html',
+                  context={'modal_add': True, 'teachers_data': request.session['teachers']})
 
 
 @permission_required("exchange_app.change_teachers")
@@ -171,6 +172,7 @@ def delete_admin(request, admin_id):
 @permission_required('auth.delete_permission')
 @login_required()
 def create_admin(request):
+    admins_list = request.session['admins_data']
     if request.method == "POST":
         send_data = {
             'name': request.POST.get('admin_name'),
@@ -180,7 +182,9 @@ def create_admin(request):
         }
         add_admin(send_data)
         return redirect('/admins')
-    return render(request=request, template_name='exchange_app/create_admin.html')
+    return render(request=request, template_name='exchange_app/admins.html',
+                  context={'modal_add': True, 'admins_data': admins_list,
+                           'admins_types': request.session['admins_type']})
 
 
 @permission_required('exchange_app.view_post')
