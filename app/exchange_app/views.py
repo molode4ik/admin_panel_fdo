@@ -66,7 +66,11 @@ def add_teacher(request):
 @permission_required("exchange_app.change_teachers")
 @login_required()
 def change_teacher(request, teacher_id):
-    teachers_list = request.session['teachers']
+    if request.session['teachers']:
+        teachers_list = request.session['teachers']
+    else:
+        teachers_list = get_teachers()
+        request.session['teachers'] = teachers_list
     teacher = search_teacher(teachers_list, teacher_id)
     if request.method == "POST":
         send_data = {
@@ -134,6 +138,7 @@ def user_edit(request, user_id):
 def admins(request):
     admins_data = get_admins()
     request.session['admins_data'] = admins_data
+    request.session['admins_type'] = ['admin', 'moderator', 'viewer']
     return render(request=request, template_name='exchange_app/admins.html',
                   context={'admins_data': admins_data, 'flag': admins_data})
 
@@ -141,7 +146,6 @@ def admins(request):
 @permission_required('auth.change_permission')
 @login_required()
 def change_admin(request, admin_id):
-    request.session['admins_type'] = ['admin', 'moderator', 'viewer']
     admins_list = request.session['admins_data']
     admin = search_admin(admins_list, admin_id)
     if request.method == "POST":
@@ -172,7 +176,11 @@ def delete_admin(request, admin_id):
 @permission_required('auth.delete_permission')
 @login_required()
 def create_admin(request):
-    admins_list = request.session['admins_data']
+    if request.session['admins_data']:
+        admins_list = request.session['admins_data']
+    else:
+        admins_list = get_admins()
+        request.session['admins_data'] = admins_list
     if request.method == "POST":
         send_data = {
             'name': request.POST.get('admin_name'),
