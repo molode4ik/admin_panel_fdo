@@ -18,7 +18,6 @@
     </title>
 </head>
 <body>
-    {% if user.is_authenticated %}
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
           <div class="container-fluid">
             <button
@@ -74,7 +73,6 @@
             </div>
           </div>
         </nav>
-    {% endif %}
     {% block content %}
     {% endblock %}
 </body>

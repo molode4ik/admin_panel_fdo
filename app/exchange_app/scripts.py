@@ -20,7 +20,7 @@ def check_auth(username: str, password: str) -> [bool, int]:
             create_authed_users(username, password, permission.lower())
         return True, permission
     else:
-        return False
+        return False, permission
 
 
 def create_authed_users(username: str, password: str, permission: str):

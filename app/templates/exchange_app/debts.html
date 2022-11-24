@@ -5,7 +5,7 @@
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/table_student.css' %}"/>
-<!--    <link rel="stylesheet" href="{% static 'css/users.css' %}"/>-->
+    <!--    <link rel="stylesheet" href="{% static 'css/users.css' %}"/>-->
 {% endblock %}
 
 {% block content %}
@@ -18,98 +18,102 @@
 
 
 
-    <div >
+    <div>
     <div class="row">
-    {% if data %}
-        {#        {% if search_value == 'Академические' %}#}
+        {% if data %}
+            {#        {% if search_value == 'Академические' %}#}
 
-        <div class="mama">
-            <div class="mama2">
-                <h4 class="title">Список <span>задолженностей</span></h4>
-            </div>
-            <div class="card mama2">
-                <h5 class="card-header">Добавить задолженности</h5>
-                <div class="card-body">
-                    <div class="handle_add">
-                <a href="/debts/create_debt"><button class="btn btn-primary"> Добавить вручную</button></a>
-               {% if modal_add %}
-                  <script>document.querySelector("#addModal").addEventListener() </script>
-               {% endif %}
-           </div>
-            <form enctype="multipart/form-data" method="post">
-                {% csrf_token %}
-                <div class="file-input">
-                    <input class="form-control " accept=".csv, .json" type="file" name="document">
+            <div class="mama">
+                <div class="mama2">
+                    <h4 class="title">Список <span>задолженностей</span></h4>
                 </div>
-                <button type="submit" class="btn btn-primary">Загрузить</button>
-            </form>
-        </div>
-    </div>
-            <div class="dropdown mama2">
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    <select class="form-select form-select-lg mb-3" name='search' aria-label=".form-select-lg example"
-                            onchange="this.form.submit()">
-                        {% for query in query_list %}
-                            <option {% if query == search_value %} selected {% endif %}> {{ query }}</option>
-                        {% endfor %}
-                    </select>
-                </form>
-            </div>
-
-            {% if modal_add %}
-                <script>document.querySelector("#addModal").addEventListener() </script>
-            {% endif %}
-            <div class="col-md-offset-1 col-md-10">
-                <div class="panel">
-                    <div class="panel-heading">
+                <div class="card mama2">
+                    <h5 class="card-header">Добавить задолженности</h5>
+                    <div class="card-body">
+                        <div class="handle_add">
+                            <a href="/debts/create_debt">
+                                <button class="btn btn-primary"> Добавить вручную</button>
+                            </a>
+                            {% if modal_add %}
+                                <script>document.querySelector("#addModal").addEventListener() </script>
+                            {% endif %}
+                        </div>
+                        <form enctype="multipart/form-data" method="post">
+                            {% csrf_token %}
+                            <div class="file-input">
+                                <input class="form-control " accept=".csv, .json" type="file" name="document">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Загрузить</button>
+                        </form>
                     </div>
-                    <div class="panel-body table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>ID задолженности</th>
-                                <th>Дата погашения</th>
-                                <th>ID студента</th>
-                                <th>Подробнее</th>
-                                {#                                    <th>Удалить</th>#}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for debt in data %}
-                                <tr>
-                                    <td>{{ debt.debt_id }}</td>
-                                    <td>{{ debt.delivery_date }}</td>
-                                    <td>{{ debt.student_id }}</td>
-                                    <td><a href="/debts/{{ debt.debt_id }}">
-                                        <button type='button' class="btn btn-primary" title="Reload"><i
-                                                class="fa fa-sync-alt"></i>Подробнее
-                                        </button>
-                                    </a></td>
-                                    {% if modal %}
-                                        <script>document.querySelector("#exampleModal").addEventListener() </script>
-                                    {% endif %}
-                                    {#                                        <td>#}
-                                    {#                                            <form action="" method="POST">#}
-                                    {#                                                {% csrf_token %}#}
-                                    {#                                                <a href="/debts/delete_debts/{{ debt.debt_id }} ">Удалить</a>#}
-                                    {#                                            </form>#}
-                                    {#                                        </td>#}
-                                </tr>
+                </div>
+                <div class="dropdown mama2">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <select class="form-select form-select-lg mb-3" name='search'
+                                aria-label=".form-select-lg example"
+                                onchange="this.form.submit()">
+                            {% for query in query_list %}
+                                <option {% if query == search_value %} selected {% endif %}> {{ query }}</option>
                             {% endfor %}
-                            </tbody>
-                        </table>
+                        </select>
+                    </form>
+                </div>
+
+                {% if modal_add %}
+                    <script>document.querySelector("#addModal").addEventListener() </script>
+                {% endif %}
+                <div class="col-md-offset-1 col-md-10">
+                    <div class="panel">
+                        <div class="panel-heading">
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>ID задолженности</th>
+                                    <th>Дата погашения</th>
+                                    <th>ID студента</th>
+                                    <th>Подробнее</th>
+                                    {#                                    <th>Удалить</th>#}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for debt in data %}
+                                    <tr>
+                                        <td>{{ debt.debt_id }}</td>
+                                        <td>{{ debt.delivery_date }}</td>
+                                        <td>{{ debt.student_id }}</td>
+                                        <td><a href="/debts/{{ debt.debt_id }}">
+                                            <button type='button' class="btn btn-primary" title="Reload"><i
+                                                    class="fa fa-sync-alt"></i>Подробнее
+                                            </button>
+                                        </a></td>
+                                        {% if modal %}
+                                            <script>document.querySelector("#exampleModal").addEventListener() </script>
+                                        {% endif %}
+                                        {#                                        <td>#}
+                                        {#                                            <form action="" method="POST">#}
+                                        {#                                                {% csrf_token %}#}
+                                        {#                                                <a href="/debts/delete_debts/{{ debt.debt_id }} ">Удалить</a>#}
+                                        {#                                            </form>#}
+                                        {#                                        </td>#}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+            </div>
 
-        {#        {% endif %}#}
-    {% endif %}
+            {#        {% endif %}#}
+        {% endif %}
     {% if debt and modal %}
         <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -169,7 +173,8 @@
         </div>
     {% endif %}
     {% if modal_add %}
-        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addModal" aria-labelledby="addModalLabel" data-bs-backdrop="static"
+             data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
