@@ -7,6 +7,11 @@ from .scripts import *
 from .api_requests import *
 from django.contrib import messages
 
+def info_mess(request, flag, word: str):
+    if flag != -1:
+        messages.info(request, f'{word} прошло успешно')
+    else:
+        messages.info(request, f'{word} не удалось')
 
 def auth(request):
     if request.user.is_authenticated and request.user.username != 'admin':
@@ -93,10 +98,7 @@ def change_teacher(request, teacher_id):
 def del_teacher(request, teacher_id):
     if request.method == 'POST':
         flag = delete_teacher(teacher_id)
-        if flag != -1:
-            messages.info(request, 'Удаление учителя прошло успешно')
-        else:
-            messages.info(request, 'Удалить учителя не удалось')
+        info_mess(request,flag,"Удалние учителя")
         return redirect('/teachers')
 
 
@@ -176,10 +178,7 @@ def change_admin(request, admin_id):
 def delete_admin(request, admin_id):
     if request.method == 'POST':
         flag = delete_admin_id(admin_id)
-        if flag != -1:
-            messages.info(request, 'Удаление Админа прошло успешно')
-        else:
-            messages.info(request, 'Удалить Админа не удалось')
+        info_mess(request, flag, "Удалние админа")
         return redirect('/admins')
 
 
@@ -223,10 +222,7 @@ def timetables(request):
 @login_required()
 def update_timetable(request):
     flag = update_shedule()
-    if flag != -1:
-        messages.info(request, 'Обновление расписания прошло успешно')
-    else:
-        messages.info(request, 'Обновить расписание не удалось')
+    info_mess(request, flag, "Обновление расписания")
     return redirect('/timetable', contetx={'flag': flag})
 
 
@@ -248,10 +244,7 @@ def table_requests(request):
 @login_required()
 def remove_error_request(request, error_id: int):
     flag = del_error_request(error_id)
-    if flag != -1:
-        messages.info(request, 'Удаление запроса прошло успешно')
-    else:
-        messages.info(request, 'Удалить запрос не удалось')
+    info_mess(request, flag, "Удаление запроса")
     return redirect('/table_requests/', context={'flag': flag, 'search_query': request.session['search_query']})
 
 
@@ -259,10 +252,7 @@ def remove_error_request(request, error_id: int):
 @login_required()
 def confirm_request(request, confirm_id):
     flag = confirm_req(confirm_id)
-    if flag != -1:
-        messages.info(request, 'Подтверждение прошло успешно')
-    else:
-        messages.info(request, 'Подтверждение не удалось')
+    info_mess(request, flag, "Подтверждение")
     return redirect('/table_requests/', context={'flag': flag, 'search_query': request.session['search_query']})
 
 
@@ -270,10 +260,7 @@ def confirm_request(request, confirm_id):
 @login_required()
 def delete_confirm_request(request, confirm_id):
     flag = delete_confirm_req(confirm_id)
-    if flag != -1:
-        messages.info(request, 'Удаление прошло успешно')
-    else:
-        messages.info(request, 'Удаление не удалось')
+    info_mess(request, flag, "Удалние")
     return redirect('/table_requests/', context={'flag': flag, 'search_query': request.session['search_query']})
 
 
@@ -315,10 +302,7 @@ def debts_see_more(request, debt_id):
             flag = delete_debt(debt_id)
         else:
             flag = del_money_debt(debt_id)
-        if flag != -1:
-            messages.info(request, 'Удаление задолжности прошло успешно')
-        else:
-            messages.info(request, 'Удалить задолжность не удалось')
+            info_mess(request, flag, "Удаление задолжности")
         return redirect('/debts')
     return render(request=request, template_name='exchange_app/debts.html',
                   context={'modal': True, 'data': debts_list,
